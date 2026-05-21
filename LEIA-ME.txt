@@ -1,20 +1,22 @@
-PÁSSARO REWARDS V6
+PÁSSARO REWARDS V7
 
 Novidades:
-- Nickname local.
-- Ranking local no aparelho.
-- Missões diárias.
-- Recompensas resgatáveis.
-- Sons simples com opção ligar/desligar.
-- Compartilhamento agora usa o nick.
-- Base preparada para ranking online futuro.
+- Cada troféu concluído libera uma caixa de presente.
+- Missões diárias também geram presente extra.
+- Presentes podem dar moedas, chave, vida, escudo, tartaruga ou ímã.
+- Novos mapas:
+  - Mapa do Amor
+  - Floresta
+  - Estádio de Futebol
+  - Noite Artística
+  - Mapa Espacial
+- Mapa Espacial só pode ser usado se tiver o Pássaro Astronauta.
+- Novos pássaros:
+  - Pássaro Astronauta
+  - Pássaro Apaixonado
 
 Para atualizar no GitHub:
-1. Extraia este ZIP.
-2. Envie/substitua os arquivos no mesmo repositório.
-3. Faça Commit changes.
+1. Extraia o ZIP.
+2. Envie os arquivos para o mesmo repositório.
+3. Clique em Commit changes.
 4. Aguarde o GitHub Pages atualizar.
-
-Se o celular mostrar a versão antiga:
-- Recarregue a página.
-- Ou remova o app da tela inicial e adicione novamente.

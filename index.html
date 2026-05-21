@@ -73,6 +73,13 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-acti
 .toggle{border:0;border-radius:999px;padding:9px 12px;background:#22c55e;color:white;font-weight:900}
 .toggle.off{background:#64748b}
 
+
+.giftBox{margin-top:12px;background:linear-gradient(145deg,rgba(250,204,21,.18),rgba(236,72,153,.15));border:1px solid rgba(255,255,255,.18);border-radius:20px;padding:14px;text-align:center}
+.giftIcon{font-size:48px;filter:drop-shadow(0 8px 12px rgba(0,0,0,.35));animation:bounceGift 1.2s infinite}
+@keyframes bounceGift{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.rewardText{font-size:18px;font-weight:900;color:#fde68a;margin-top:8px}
+.lockNote{display:block;color:#fecaca!important;margin-top:3px}
+
 </style>
 </head>
 <body>
@@ -101,16 +108,18 @@ const scoreEl=document.getElementById("score"),walletEl=document.getElementById(
 let save;try{save=JSON.parse(localStorage.getItem("birdRewardsV3Save")||"")}catch(e){save=null}
 if(!save)save={wallet:0,keys:0,best:0,skin:"zombie",owned:["zombie"],theme:"sky",ownedThemes:["sky"],level:1,xp:0,totalCoins:0,totalKeys:0,games:0,revives:0};
 if(!save.owned)save.owned=["zombie"]; if(!save.owned.includes("zombie"))save.owned.unshift("zombie"); if(save.skin==="yellow"||save.skin==="alvinegro"||save.skin==="blueclub"||save.skin==="redclub"||save.skin==="greenclub"||save.skin==="purple")save.skin="zombie";
-if(save.totalCoins===undefined)save.totalCoins=save.wallet||0; if(save.totalKeys===undefined)save.totalKeys=save.keys||0; if(save.games===undefined)save.games=0; if(save.revives===undefined)save.revives=0; if(!save.nick)save.nick="Jogador"; if(!save.ranking)save.ranking=[]; if(save.sound===undefined)save.sound=true; if(!save.daily)save.daily={date:"",coins:0,score:0,games:0,claimed:[]};
+if(save.totalCoins===undefined)save.totalCoins=save.wallet||0; if(save.totalKeys===undefined)save.totalKeys=save.keys||0; if(save.games===undefined)save.games=0; if(save.revives===undefined)save.revives=0; if(!save.nick)save.nick="Jogador"; if(!save.ranking)save.ranking=[]; if(save.sound===undefined)save.sound=true; if(!save.daily)save.daily={date:"",coins:0,score:0,games:0,claimed:[]}; if(!save.gifts)save.gifts=[]; if(!save.inventory)save.inventory={shield:0,heart:0,slow:0,magnet:0}; if(!save.claimedTrophies)save.claimedTrophies=[];
 
 const skins={
  zombie:{name:"Pássaro Zumbi",rarity:"Temático",price:0,body:"#84cc16",wing:"#365314",themeIcon:"🧟",fx:"zombie"},
  future:{name:"Pássaro Futurista",rarity:"Épico",price:160,body:"#22d3ee",wing:"#2563eb",themeIcon:"🤖",fx:"future"},
  player:{name:"Pássaro Jogador",rarity:"Esportivo",price:180,body:"#f8fafc",wing:"#111827",themeIcon:"⚽",fx:"ball"},
  brazil:{name:"Pássaro Brasil Copa",rarity:"Torcida",price:220,body:"#facc15",wing:"#16a34a",themeIcon:"🇧🇷",fx:"brazil"},
- elegant:{name:"Pássaro Elegante",rarity:"Raro",price:260,body:"#f8fafc",wing:"#111827",themeIcon:"🎩",fx:"elegant"},
+ romantic:{name:"Pássaro Apaixonado",rarity:"Evento",price:260,body:"#fb7185",wing:"#f9a8d4",themeIcon:"💘",fx:"love"},
+ elegant:{name:"Pássaro Elegante",rarity:"Raro",price:280,body:"#f8fafc",wing:"#111827",themeIcon:"🎩",fx:"elegant"},
  firebird:{name:"Pássaro de Fogo",rarity:"Épico",price:340,body:"#ef4444",wing:"#f97316",themeIcon:"🔥",fx:"fire"},
  spider:{name:"Pássaro Aranha",rarity:"Especial",price:420,body:"#dc2626",wing:"#111827",themeIcon:"🕷️",fx:"spider"},
+ astronaut:{name:"Pássaro Astronauta",rarity:"Especial",price:520,body:"#e5e7eb",wing:"#60a5fa",themeIcon:"🚀",fx:"astronaut"},
  gold:{name:"Pássaro Dourado",rarity:"Lendário",price:3,keyPrice:true,body:"#fbbf24",wing:"#f59e0b",themeIcon:"👑",fx:"gold"}
 };
 const themes={
@@ -118,7 +127,12 @@ const themes={
  night:{name:"Noite Estrelada",price:120,top:"#020617",mid:"#1e1b4b",bottom:"#312e81",pipe:"#334155",pipe2:"#64748b"},
  city:{name:"Cidade NY",price:180,top:"#60a5fa",mid:"#93c5fd",bottom:"#cbd5e1",pipe:"#475569",pipe2:"#94a3b8",city:true},
  fire:{name:"Fogo Sombrio",price:250,top:"#1c1917",mid:"#7f1d1d",bottom:"#f97316",pipe:"#7f1d1d",pipe2:"#ef4444",fire:true},
- zombie:{name:"Terra Zumbi",price:320,top:"#052e16",mid:"#365314",bottom:"#a3e635",pipe:"#166534",pipe2:"#65a30d",zombie:true}
+ zombie:{name:"Terra Zumbi",price:320,top:"#052e16",mid:"#365314",bottom:"#a3e635",pipe:"#166534",pipe2:"#65a30d",zombie:true},
+ love:{name:"Mapa do Amor",price:260,top:"#f9a8d4",mid:"#fbcfe8",bottom:"#fdf2f8",pipe:"#db2777",pipe2:"#fb7185",love:true},
+ forest:{name:"Floresta Viva",price:300,top:"#064e3b",mid:"#15803d",bottom:"#bbf7d0",pipe:"#166534",pipe2:"#22c55e",forest:true},
+ stadium:{name:"Estádio de Futebol",price:340,top:"#38bdf8",mid:"#93c5fd",bottom:"#16a34a",pipe:"#0f172a",pipe2:"#f8fafc",stadium:true},
+ vangogh:{name:"Noite Artística",price:420,top:"#1e3a8a",mid:"#312e81",bottom:"#facc15",pipe:"#1d4ed8",pipe2:"#fbbf24",vangogh:true},
+ space:{name:"Mapa Espacial",price:600,top:"#020617",mid:"#111827",bottom:"#1e1b4b",pipe:"#6366f1",pipe2:"#a78bfa",space:true,requiresSkin:"astronaut"}
 };
 let state="menu",score=0,coinsRun=0,keysRun=0,lives=3,frames=0,speed=2.7,difficulty=1,revived=false,pipes=[],coins=[],keys=[],powerups=[],clouds=[],particles=[],shield=0,magnet=0,slow=0;
 const bird={x:95,y:260,r:17,vy:0,gravity:.42,jump:-7.3,rot:0,inv:0};
@@ -142,9 +156,9 @@ function showMenu(){
  '<button class="menuTile" id="trophyBtn"><span>🎖️</span>Troféus<small>Conquistas</small></button>'+
  '<button class="menuTile" id="shareBtn"><span>📤</span>Compartilhar<small>Seu recorde</small></button>'+
  '<button class="menuTile" id="settingsBtn"><span>⚙️</span>Ajustes<small>Som</small></button>'+
- '<button class="menuTile" id="infoBtn"><span>✨</span>Novidades<small>V6</small></button>'+
+ '<button class="menuTile" id="infoBtn"><span>✨</span>Novidades<small>V7</small></button>'+
  '</div>'+
- '<div class="newsBox"><b>Novidades:</b> nickname, ranking local, missões diárias, sons e ajustes. Continue coletando moedas para desbloquear tudo.</div>'+
+ '<div class="newsBox"><b>Novidades:</b> caixas de presente, novos mapas e pássaros especiais. Continue coletando moedas para desbloquear tudo.</div>'+
  '<p style="font-size:12px;color:#fde68a">Mobile/PWA: publique no GitHub Pages e instale pela Tela de Início.</p>';
  document.getElementById("playBtn").onclick=start;
  document.getElementById("skinBtn").onclick=()=>shop("skins");
@@ -217,7 +231,7 @@ function claimMission(id){
  if(!m||m.value<m.goal||save.daily.claimed.includes(id))return;
  save.daily.claimed.push(id);
  if(m.type==="key")save.keys+=m.reward;else save.wallet+=m.reward;
- persist();hud();showMissions();showPower("🎁 RECOMPENSA!");
+ persist();hud();const rr=rewardGift("Missão diária: "+m.name);showMissions();showPower("🎁 "+rr.label);
 }
 function updateRanking(){
  save.ranking=save.ranking||[];
@@ -225,6 +239,31 @@ function updateRanking(){
  save.ranking.sort((a,b)=>b.score-a.score);
  save.ranking=save.ranking.slice(0,10);
  persist();
+}
+
+
+function rewardGift(reason){
+ const pool=[
+  {type:"coins",amount:25,label:"25 moedas 🪙"},
+  {type:"coins",amount:50,label:"50 moedas 🪙"},
+  {type:"key",amount:1,label:"1 chave 🔑"},
+  {type:"shield",amount:1,label:"1 escudo 🛡️"},
+  {type:"heart",amount:1,label:"1 vida ❤️"},
+  {type:"slow",amount:1,label:"1 tartaruga 🐢"},
+  {type:"magnet",amount:1,label:"1 ímã 🧲"}
+ ];
+ const reward=pool[Math.floor(Math.random()*pool.length)];
+ if(reward.type==="coins")save.wallet+=reward.amount;
+ if(reward.type==="key")save.keys+=reward.amount;
+ if(["shield","heart","slow","magnet"].includes(reward.type))save.inventory[reward.type]=(save.inventory[reward.type]||0)+reward.amount;
+ save.gifts.push({reason:reason,label:reward.label,date:new Date().toLocaleDateString()});
+ persist();hud();
+ return reward;
+}
+function openGiftScreen(reason){
+ const r=rewardGift(reason);
+ card.innerHTML='<h1>🎁 Caixa de Presente</h1><p>Missão concluída: <b>'+reason+'</b></p><div class="giftBox"><div class="giftIcon">🎁</div><div class="rewardText">Você ganhou: '+r.label+'</div></div><p>Itens como escudo, vida, tartaruga e ímã ficam guardados para futuras melhorias de uso antes da partida.</p><div class="row"><button class="menuBtn green" id="giftOk">LEGAL!</button></div>';
+ document.getElementById("giftOk").onclick=showTrophies;
 }
 
 function trophyList(){
@@ -242,11 +281,12 @@ function trophyList(){
 function showTrophies(){
  const list=trophyList();
  let unlocked=list.filter(t=>t.ok).length;
- let html='<h1>🎖️ Troféus</h1><p>Complete missões para desbloquear troféus.</p><p><b>'+unlocked+'/'+list.length+'</b> desbloqueados</p><div class="trophyGrid">';
- list.forEach(t=>{html+='<div class="trophyCard '+(t.ok?'':'locked')+'"><div class="trophyIcon">'+t.icon+'</div><div><b>'+t.name+(t.ok?' <span class="badgeMini">OK</span>':'')+'</b><small>'+t.desc+'</small></div></div>'});
+ let html='<h1>🎖️ Troféus</h1><p>Cada troféu concluído libera uma caixa de presente.</p><p><b>'+unlocked+'/'+list.length+'</b> concluídos</p><div class="trophyGrid">';
+ list.forEach(t=>{const claimed=save.claimedTrophies.includes(t.id);html+='<div class="trophyCard '+(t.ok?'':'locked')+'"><div class="trophyIcon">'+(claimed?'🎁':t.icon)+'</div><div><b>'+t.name+(claimed?' <span class="badgeMini">PRESENTE ABERTO</span>':t.ok?' <span class="badgeMini">RESGATAR</span>':'')+'</b><small>'+t.desc+'</small>'+(t.ok&&!claimed?'<div class="row"><button class="menuBtn green" data-trophy="'+t.id+'">ABRIR PRESENTE</button></div>':'')+'</div></div>'});
  html+='</div><div class="row"><button class="menuBtn" id="backBtn">VOLTAR</button></div>';
  card.innerHTML=html;
  document.getElementById("backBtn").onclick=showMenu;
+ Array.from(card.querySelectorAll("[data-trophy]")).forEach(b=>b.onclick=()=>{const id=b.dataset.trophy;const t=trophyList().find(x=>x.id===id);if(t&&t.ok&&!save.claimedTrophies.includes(id)){save.claimedTrophies.push(id);persist();openGiftScreen(t.name)}})
 }
 function shareMessage(){
  const skinName=(skins[save.skin]||skins.zombie).name;
@@ -271,7 +311,7 @@ function showRanking(){
  document.getElementById("backBtn").onclick=showMenu;
 }
 function showNews(){
- card.innerHTML='<h1>✨ Novidades V6</h1><p>Agora o jogo começa a ficar pronto para testes com amigos.</p><p>✅ Nickname local<br>✅ Ranking local<br>✅ Missões diárias<br>✅ Recompensas resgatáveis<br>✅ Sons simples com liga/desliga<br>✅ Compartilhamento com nick</p><p>Próximos passos: ranking online, tela de seleção de dificuldade, sons melhores e publicação Android.</p><div class="row"><button class="menuBtn" id="backBtn">VOLTAR</button></div>';
+ card.innerHTML='<h1>✨ Novidades V7</h1><p>Essa versão adiciona mais coleção e recompensas.</p><p>✅ Caixas de presente em troféus<br>✅ Presentes em missões diárias<br>✅ Pássaro Astronauta<br>✅ Pássaro Apaixonado<br>✅ Mapa do Amor<br>✅ Floresta<br>✅ Estádio de Futebol<br>✅ Noite Artística<br>✅ Mapa Espacial bloqueado pelo Astronauta</p><p>Próximos passos: usar itens do inventário antes da partida, animação de abrir caixa e ranking online.</p><div class="row"><button class="menuBtn" id="backBtn">VOLTAR</button></div>';
  document.getElementById("backBtn").onclick=showMenu;
 }
 
@@ -279,11 +319,11 @@ function shop(type){
  let isTheme=type==="themes";
  let data=isTheme?themes:skins;
  let html='<h1>'+(isTheme?'Paisagens':'Pássaros')+'</h1><p>'+(isTheme?'Compre cenários diferentes com moedas.':'Colecione pássaros temáticos: zumbi, futurista, jogador, Brasil, elegante, fogo e aranha.')+'</p><div class="shop">';
- Object.keys(data).forEach(id=>{const s=data[id];const owned=isTheme?save.ownedThemes.includes(id):save.owned.includes(id);const sel=isTheme?save.theme===id:save.skin===id;const price=s.keyPrice?("🔑 "+s.price):("🪙 "+s.price);const color=s.body||s.top;html+='<div class="shopItem"><div><b><span class="previewDot" style="background:'+color+'"></span>'+s.name+'</b><small>'+(s.rarity? s.rarity+" • ":"")+(owned?(sel?'Selecionado':'Comprado'):'Preço: '+price)+'</small></div><button class="'+((owned||(!s.keyPrice&&save.wallet>=s.price)||(s.keyPrice&&save.keys>=s.price))?'':'locked')+'" data-id="'+id+'">'+(owned?(sel?'OK':'Usar'):'Comprar')+'</button></div>'});
+ Object.keys(data).forEach(id=>{const s=data[id];const owned=isTheme?save.ownedThemes.includes(id):save.owned.includes(id);const sel=isTheme?save.theme===id:save.skin===id;const price=s.keyPrice?("🔑 "+s.price):("🪙 "+s.price);const color=s.body||s.top;const lockedReq=isTheme&&s.requiresSkin&&!save.owned.includes(s.requiresSkin);const reqText=lockedReq?'<span class="lockNote">Requer: Pássaro Astronauta</span>':'';html+='<div class="shopItem"><div><b><span class="previewDot" style="background:'+color+'"></span>'+s.name+'</b><small>'+(s.rarity? s.rarity+" • ":"")+(owned?(sel?'Selecionado':'Comprado'):'Preço: '+price)+reqText+'</small></div><button class="'+((owned||(!lockedReq&&((!s.keyPrice&&save.wallet>=s.price)||(s.keyPrice&&save.keys>=s.price))))?'':'locked')+'" data-id="'+id+'">'+(owned?(sel?'OK':'Usar'):(lockedReq?'Bloq.':'Comprar'))+'</button></div>'});
  html+='</div><div class="row"><button class="menuBtn" id="backBtn">VOLTAR</button></div>';card.innerHTML=html;
  document.getElementById("backBtn").onclick=showMenu;Array.from(card.querySelectorAll("[data-id]")).forEach(b=>b.onclick=()=>buy(type,b.dataset.id));
 }
-function buy(type,id){let isTheme=type==="themes",data=isTheme?themes:skins,s=data[id],owned=isTheme?save.ownedThemes.includes(id):save.owned.includes(id);if(owned){if(isTheme)save.theme=id;else save.skin=id;persist();shop(type);return}if(s.keyPrice){if(save.keys>=s.price){save.keys-=s.price;if(isTheme)save.ownedThemes.push(id);else save.owned.push(id);if(isTheme)save.theme=id;else save.skin=id;persist();hud();shop(type)}}else if(save.wallet>=s.price){save.wallet-=s.price;if(isTheme)save.ownedThemes.push(id);else save.owned.push(id);if(isTheme)save.theme=id;else save.skin=id;persist();hud();shop(type)}}
+function buy(type,id){let isTheme=type==="themes",data=isTheme?themes:skins,s=data[id],owned=isTheme?save.ownedThemes.includes(id):save.owned.includes(id);if(isTheme&&s.requiresSkin&&!save.owned.includes(s.requiresSkin)){showPower("🔒 PRECISA DO ASTRONAUTA");return}if(owned){if(isTheme)save.theme=id;else save.skin=id;persist();shop(type);return}if(s.keyPrice){if(save.keys>=s.price){save.keys-=s.price;if(isTheme)save.ownedThemes.push(id);else save.owned.push(id);if(isTheme)save.theme=id;else save.skin=id;persist();hud();shop(type)}}else if(save.wallet>=s.price){save.wallet-=s.price;if(isTheme)save.ownedThemes.push(id);else save.owned.push(id);if(isTheme)save.theme=id;else save.skin=id;persist();hud();shop(type)}} 
 function start(){state="play";overlay.style.display="none";checkDaily();save.games++;save.daily.games++;persist();score=0;coinsRun=0;keysRun=0;lives=3;frames=0;speed=2.7;difficulty=1;revived=false;pipes=[];coins=[];keys=[];powerups=[];particles=[];clouds=[];shield=0;magnet=0;slow=0;bird.x=W*.23;bird.y=H*.45;bird.vy=0;bird.inv=90;for(let i=0;i<8;i++)clouds.push({x:rand(0,W),y:rand(40,H-120),s:rand(.7,1.5),v:rand(.12,.35)});hud();}
 function flap(){if(state==="menu"||state==="over"){start();return}if(state==="play"){bird.vy=bird.jump;for(let i=0;i<5;i++)particles.push({x:bird.x-10,y:bird.y+5,vx:rand(-3,-1),vy:rand(-1,1),life:20})}}
 function spawnPipe(){const gap=Math.max(H*.21,H*.32-difficulty*8),top=rand(78,H-gap-122),w=Math.max(58,W*.13),x=W+20;pipes.push({x,w,top,gap,passed:false});if(Math.random()<.88)coins.push({x:x+w/2,y:top+gap/2,r:13,taken:false});if(Math.random()<.11)keys.push({x:x+w/2+rand(-25,25),y:top+gap/2+rand(-40,40),r:15,taken:false});if(Math.random()<.14){const types=["heart","shield","magnet","slow"];powerups.push({x:x+w/2+rand(-30,30),y:top+gap/2+rand(-35,35),r:16,taken:false,type:types[Math.floor(Math.random()*types.length)]})}}
