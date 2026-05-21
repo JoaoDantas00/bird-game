@@ -95,6 +95,14 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-acti
 .rewardBig{color:#fde68a;font-weight:900}
 .diffBox{margin-top:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:18px;padding:12px;text-align:left;color:#dbeafe}
 
+
+.glowEpic{filter:drop-shadow(0 0 12px rgba(255,255,255,.45))}
+.legendaryPulse{animation:legendPulse 1.4s infinite}
+@keyframes legendPulse{
+0%,100%{transform:scale(1)}
+50%{transform:scale(1.06)}
+}
+
 </style>
 </head>
 <body>
@@ -178,7 +186,7 @@ function showMenu(){
  '<button class="menuTile" id="trophyBtn"><span>🎖️</span>Troféus<small>Conquistas</small></button>'+
  '<button class="menuTile" id="shareBtn"><span>📤</span>Compartilhar<small>Seu recorde</small></button>'+
  '<button class="menuTile" id="settingsBtn"><span>⚙️</span>Ajustes<small>Som</small></button>'+
- '<button class="menuTile" id="infoBtn"><span>✨</span>Novidades<small>V8</small></button>'+
+ '<button class="menuTile" id="infoBtn"><span>✨</span>Novidades<small>V9</small></button>'+
  '</div>'+
  '<div class="newsBox"><b>Novidades:</b> mapas vivos, obstáculos únicos e troféus avançados. Continue coletando moedas para desbloquear tudo.</div>'+
  '<p style="font-size:12px;color:#fde68a">Mobile/PWA: publique no GitHub Pages e instale pela Tela de Início.</p>';
@@ -358,8 +366,8 @@ function showRanking(){
  document.getElementById("backBtn").onclick=showMenu;
 }
 function showNews(){
- card.innerHTML='<h1>✨ Novidades V8</h1><p>Grande atualização de conteúdo e dificuldade.</p><p>✅ Mais missões e troféus<br>✅ Recompensas maiores conforme o progresso<br>✅ Obstáculos exclusivos por mapa<br>✅ Mapa Antigo + Pássaro Antigo<br>✅ Fundo do Mar + Peixe Explorador<br>✅ Pássaro Dragão mítico<br>✅ Mapas mais detalhados<br>✅ Fogo, zumbis, estádio, floresta, espaço e oceano mais vivos</p><div class="diffBox"><b>Regra nova:</b> mapas mais difíceis têm obstáculos próprios e dão mais moedas. Quanto maior o desafio, melhor a recompensa.</div><div class="row"><button class="menuBtn" id="backBtn">VOLTAR</button></div>';
- document.getElementById("backBtn").onclick=showMenu;
+card.innerHTML='<h1>✨ Novidades V9</h1><p>Grande atualização visual.</p><p>✅ Pássaros maiores e mais detalhados<br>✅ Efeitos especiais aprimorados<br>✅ Mapa do Amor com corações animados<br>✅ Mapa zumbi mais vivo<br>✅ Fundo do mar animado<br>✅ Estádio com torcida<br>✅ Fogo e partículas melhoradas<br>✅ Skins lendárias mais vivas</p><div class="diffBox"><b>Nova direção do jogo:</b> cada mapa agora possui identidade própria, atmosfera própria e sensação única.</div><div class="row"><button class="menuBtn" id="backBtn">VOLTAR</button></div>';
+document.getElementById("backBtn").onclick=showMenu;
 }
 
 function shop(type){
@@ -379,7 +387,7 @@ function spawnHazard(){
  const t=theme();
  if(!t.obstacle)return;
  const type=t.obstacle;
- let h={type,x:W+30,y:rand(90,H-150),r:18,w:36,h:36,vy:0,speed:rand(3.2,5.2)*(t.diff||1)};
+ let h={type,x:W+30,y:rand(90,H-150),r:24,w:36,h:36,vy:0,speed:rand(3.2,5.2)*(t.diff||1)};
  if(type==="zombiehand"){h.y=H-100;h.w=38;h.h=55}
  if(type==="branch"){h.y=rand(95,H-210);h.w=70;h.h=18}
  if(type==="ball"){h.r=15;h.y=rand(120,H-180)}
