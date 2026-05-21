@@ -1,27 +1,26 @@
-PÁSSARO REWARDS V3
+PÁSSARO REWARDS V5
 
 Novidades:
-- Interface mais moderna.
-- Skins novas, incluindo pássaro alvinegro inspirado em torcida.
-- Paisagens compráveis:
-  - Noite Estrelada
-  - Cidade NY
-  - Fogo Sombrio
-  - Terra Zumbi
-- Loja separada entre pássaros e paisagens.
-- Sistema de moedas, chaves, vidas, power-ups e nível mantido.
+- Pássaros simples removidos.
+- Novos pássaros temáticos:
+  - Zumbi
+  - Futurista
+  - Jogador de futebol
+  - Brasil Copa
+  - Elegante
+  - Fogo
+  - Aranha
+  - Dourado
+- Aba Troféus com missões permanentes.
+- Aba Compartilhar para enviar recorde aos amigos.
+- Preparado para futuro Nick e Ranking.
+- Paisagens compráveis mantidas.
+- Moedas, chaves, vidas e power-ups mantidos.
 
 Para PC:
 - Abra index.html.
 
 Para Mobile/PWA:
-- Suba os arquivos no GitHub Pages.
-- Abra o link no Safari/Chrome.
-- Adicione à tela de início.
-
-
-V4 MENU:
-- Tela inicial reformulada.
-- Botão grande de jogar.
-- Cards de status.
-- Acesso rápido para pássaros, paisagens, recorde e novidades.
+- Atualize os arquivos no GitHub Pages.
+- Abra o link no celular.
+- Se necessário, remova e adicione novamente à tela inicial.

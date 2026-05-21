@@ -50,6 +50,16 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-acti
 .newsBox{margin-top:12px;background:rgba(15,23,42,.42);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:12px;text-align:left;color:#dbeafe;font-size:13px;line-height:1.45}
 .newsBox b{color:#fde68a}
 
+
+.trophyGrid{display:grid;gap:9px;margin-top:12px}
+.trophyCard{display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:18px;padding:11px;text-align:left}
+.trophyIcon{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:rgba(250,204,21,.2);font-size:24px}
+.trophyCard.locked{opacity:.48;filter:grayscale(.75)}
+.trophyCard b{display:block;color:white}.trophyCard small{display:block;color:#cbd5e1;margin-top:3px}
+.shareBox{margin-top:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:12px;text-align:left;color:#dbeafe;line-height:1.45}
+.copyArea{width:100%;min-height:110px;border:1px solid rgba(255,255,255,.18);border-radius:16px;background:rgba(15,23,42,.75);color:white;padding:12px;margin-top:10px;font-family:Arial;font-size:14px}
+.badgeMini{display:inline-block;padding:4px 8px;border-radius:999px;background:rgba(250,204,21,.18);color:#fde68a;font-size:11px;margin-left:6px}
+
 </style>
 </head>
 <body>
@@ -76,16 +86,19 @@ resize();addEventListener("resize",resize);
 const scoreEl=document.getElementById("score"),walletEl=document.getElementById("wallet"),keysEl=document.getElementById("keys"),livesEl=document.getElementById("lives"),bestEl=document.getElementById("best"),overlay=document.getElementById("overlay"),card=document.getElementById("card"),pauseBtn=document.getElementById("pauseBtn"),powerText=document.getElementById("powerText");
 
 let save;try{save=JSON.parse(localStorage.getItem("birdRewardsV3Save")||"")}catch(e){save=null}
-if(!save)save={wallet:0,keys:0,best:0,skin:"yellow",owned:["yellow"],theme:"sky",ownedThemes:["sky"],level:1,xp:0};
+if(!save)save={wallet:0,keys:0,best:0,skin:"zombie",owned:["zombie"],theme:"sky",ownedThemes:["sky"],level:1,xp:0,totalCoins:0,totalKeys:0,games:0,revives:0};
+if(!save.owned)save.owned=["zombie"]; if(!save.owned.includes("zombie"))save.owned.unshift("zombie"); if(save.skin==="yellow"||save.skin==="alvinegro"||save.skin==="blueclub"||save.skin==="redclub"||save.skin==="greenclub"||save.skin==="purple")save.skin="zombie";
+if(save.totalCoins===undefined)save.totalCoins=save.wallet||0; if(save.totalKeys===undefined)save.totalKeys=save.keys||0; if(save.games===undefined)save.games=0; if(save.revives===undefined)save.revives=0;
 
 const skins={
- yellow:{name:"Pássaro Amarelo",rarity:"Comum",price:0,body:"#facc15",wing:"#f97316"},
- alvinegro:{name:"Pássaro Alvinegro",rarity:"Torcida",price:120,body:"#f8fafc",wing:"#111827",stripe:true},
- blueclub:{name:"Pássaro Azul Clube",rarity:"Torcida",price:140,body:"#2563eb",wing:"#93c5fd"},
- redclub:{name:"Pássaro Vermelho Clube",rarity:"Torcida",price:140,body:"#dc2626",wing:"#fca5a5"},
- greenclub:{name:"Pássaro Verde Clube",rarity:"Torcida",price:160,body:"#16a34a",wing:"#bbf7d0"},
- purple:{name:"Pássaro Roxo Épico",rarity:"Épico",price:300,body:"#a855f7",wing:"#7e22ce"},
- gold:{name:"Pássaro Dourado",rarity:"Lendário",price:3,keyPrice:true,body:"#fbbf24",wing:"#f59e0b"}
+ zombie:{name:"Pássaro Zumbi",rarity:"Temático",price:0,body:"#84cc16",wing:"#365314",themeIcon:"🧟",fx:"zombie"},
+ future:{name:"Pássaro Futurista",rarity:"Épico",price:160,body:"#22d3ee",wing:"#2563eb",themeIcon:"🤖",fx:"future"},
+ player:{name:"Pássaro Jogador",rarity:"Esportivo",price:180,body:"#f8fafc",wing:"#111827",themeIcon:"⚽",fx:"ball"},
+ brazil:{name:"Pássaro Brasil Copa",rarity:"Torcida",price:220,body:"#facc15",wing:"#16a34a",themeIcon:"🇧🇷",fx:"brazil"},
+ elegant:{name:"Pássaro Elegante",rarity:"Raro",price:260,body:"#f8fafc",wing:"#111827",themeIcon:"🎩",fx:"elegant"},
+ firebird:{name:"Pássaro de Fogo",rarity:"Épico",price:340,body:"#ef4444",wing:"#f97316",themeIcon:"🔥",fx:"fire"},
+ spider:{name:"Pássaro Aranha",rarity:"Especial",price:420,body:"#dc2626",wing:"#111827",themeIcon:"🕷️",fx:"spider"},
+ gold:{name:"Pássaro Dourado",rarity:"Lendário",price:3,keyPrice:true,body:"#fbbf24",wing:"#f59e0b",themeIcon:"👑",fx:"gold"}
 };
 const themes={
  sky:{name:"Céu Clássico",price:0,top:"#7dd3fc",mid:"#dbeafe",bottom:"#bfdbfe",pipe:"#16a34a",pipe2:"#22c55e"},
@@ -111,7 +124,9 @@ function showMenu(){
  '<button class="menuTile" id="skinBtn"><span>🐤</span>Pássaros<small>'+skinName+'</small></button>'+
  '<button class="menuTile" id="themeBtn"><span>🌎</span>Paisagens<small>'+themeName+'</small></button>'+
  '<button class="menuTile" id="rankingBtn"><span>🏆</span>Recorde<small>'+save.best+' pontos</small></button>'+
- '<button class="menuTile" id="infoBtn"><span>✨</span>Novidades<small>V4 Menu</small></button>'+
+ '<button class="menuTile" id="trophyBtn"><span>🎖️</span>Troféus<small>Missões</small></button>'+
+ '<button class="menuTile" id="shareBtn"><span>📤</span>Compartilhar<small>Seu recorde</small></button>'+
+ '<button class="menuTile" id="infoBtn"><span>✨</span>Novidades<small>V5</small></button>'+
  '</div>'+
  '<div class="newsBox"><b>Novidades:</b> tela inicial reformulada, acesso rápido à loja, paisagens e progresso do jogador. Continue coletando moedas para desbloquear tudo.</div>'+
  '<p style="font-size:12px;color:#fde68a">Mobile/PWA: publique no GitHub Pages e instale pela Tela de Início.</p>';
@@ -119,7 +134,44 @@ function showMenu(){
  document.getElementById("skinBtn").onclick=()=>shop("skins");
  document.getElementById("themeBtn").onclick=()=>shop("themes");
  document.getElementById("rankingBtn").onclick=()=>showRanking();
+ document.getElementById("trophyBtn").onclick=()=>showTrophies();
+ document.getElementById("shareBtn").onclick=()=>showShare();
  document.getElementById("infoBtn").onclick=()=>showNews();
+}
+
+
+function trophyList(){
+ return [
+  {id:"first",icon:"🎮",name:"Primeiro Voo",desc:"Jogue sua primeira partida.",ok:save.games>=1},
+  {id:"score50",icon:"🏆",name:"Subindo Alto",desc:"Faça 50 pontos.",ok:save.best>=50},
+  {id:"score100",icon:"👑",name:"Mestre dos Canos",desc:"Faça 100 pontos.",ok:save.best>=100},
+  {id:"coins100",icon:"🪙",name:"Colecionador",desc:"Junte 100 moedas no total.",ok:save.totalCoins>=100},
+  {id:"keys5",icon:"🔑",name:"Caçador de Chaves",desc:"Junte 5 chaves no total.",ok:save.totalKeys>=5},
+  {id:"skins3",icon:"🐦",name:"Estiloso",desc:"Desbloqueie 3 pássaros.",ok:save.owned.length>=3},
+  {id:"themes2",icon:"🌎",name:"Viajante",desc:"Desbloqueie 2 paisagens.",ok:save.ownedThemes.length>=2},
+  {id:"revive",icon:"❤️",name:"Segunda Chance",desc:"Use revive uma vez.",ok:save.revives>=1}
+ ];
+}
+function showTrophies(){
+ const list=trophyList();
+ let unlocked=list.filter(t=>t.ok).length;
+ let html='<h1>🎖️ Troféus</h1><p>Complete missões para desbloquear troféus.</p><p><b>'+unlocked+'/'+list.length+'</b> desbloqueados</p><div class="trophyGrid">';
+ list.forEach(t=>{html+='<div class="trophyCard '+(t.ok?'':'locked')+'"><div class="trophyIcon">'+t.icon+'</div><div><b>'+t.name+(t.ok?' <span class="badgeMini">OK</span>':'')+'</b><small>'+t.desc+'</small></div></div>'});
+ html+='</div><div class="row"><button class="menuBtn" id="backBtn">VOLTAR</button></div>';
+ card.innerHTML=html;
+ document.getElementById("backBtn").onclick=showMenu;
+}
+function shareMessage(){
+ const skinName=(skins[save.skin]||skins.zombie).name;
+ const themeName=(themes[save.theme]||themes.sky).name;
+ return '🏆 Fiz '+save.best+' pontos no Pássaro Rewards!\\n🐦 Meu pássaro: '+skinName+'\\n🌎 Paisagem: '+themeName+'\\n🪙 Moedas: '+save.wallet+' | 🔑 Chaves: '+save.keys+'\\nConsegue bater meu recorde?';
+}
+function showShare(){
+ const msg=shareMessage();
+ card.innerHTML='<h1>📤 Compartilhar</h1><p>Envie seu recorde para seus amigos. Em breve vamos colocar Nick e ranking.</p><div class="shareBox"><b>Mensagem pronta:</b><textarea class="copyArea" id="shareText">'+msg+'</textarea></div><div class="row"><button class="menuBtn green" id="shareNative">COMPARTILHAR</button><button class="menuBtn alt" id="copyBtn">COPIAR</button><button class="menuBtn" id="backBtn">VOLTAR</button></div>';
+ document.getElementById("backBtn").onclick=showMenu;
+ document.getElementById("copyBtn").onclick=()=>{const t=document.getElementById("shareText");t.select();document.execCommand("copy");showPower("📋 COPIADO!")};
+ document.getElementById("shareNative").onclick=()=>{if(navigator.share){navigator.share({text:document.getElementById("shareText").value}).catch(()=>{})}else{const t=document.getElementById("shareText");t.select();document.execCommand("copy");showPower("📋 COPIADO!")}};
 }
 
 function showRanking(){
@@ -127,29 +179,29 @@ function showRanking(){
  document.getElementById("backBtn").onclick=showMenu;
 }
 function showNews(){
- card.innerHTML='<h1>✨ Novidades</h1><p>Essa versão está focada em deixar o jogo com mais cara de game mobile.</p><p>✅ Tela inicial nova<br>✅ Botão grande de jogar<br>✅ Cards de status<br>✅ Acesso rápido para pássaros, paisagens, recorde e novidades<br>✅ Skins e paisagens da V3 mantidas</p><p>Próximos passos: missões diárias, sons melhores, conquistas e tela de seleção de dificuldade.</p><div class="row"><button class="menuBtn" id="backBtn">VOLTAR</button></div>';
+ card.innerHTML='<h1>✨ Novidades V5</h1><p>Essa versão muda a identidade do jogo.</p><p>✅ Pássaros temáticos<br>✅ Aba Troféus<br>✅ Missões permanentes<br>✅ Aba Compartilhar<br>✅ Preparação para Nick e Ranking<br>✅ Paisagens e loja mantidas</p><p>Próximos passos: nickname, ranking online, sons melhores e missões diárias.</p><div class="row"><button class="menuBtn" id="backBtn">VOLTAR</button></div>';
  document.getElementById("backBtn").onclick=showMenu;
 }
 
 function shop(type){
  let isTheme=type==="themes";
  let data=isTheme?themes:skins;
- let html='<h1>'+(isTheme?'Paisagens':'Pássaros')+'</h1><p>'+(isTheme?'Compre cenários diferentes com moedas.':'Compre novas skins. A alvinegra é inspirada em torcida, sem escudo oficial.')+'</p><div class="shop">';
+ let html='<h1>'+(isTheme?'Paisagens':'Pássaros')+'</h1><p>'+(isTheme?'Compre cenários diferentes com moedas.':'Colecione pássaros temáticos: zumbi, futurista, jogador, Brasil, elegante, fogo e aranha.')+'</p><div class="shop">';
  Object.keys(data).forEach(id=>{const s=data[id];const owned=isTheme?save.ownedThemes.includes(id):save.owned.includes(id);const sel=isTheme?save.theme===id:save.skin===id;const price=s.keyPrice?("🔑 "+s.price):("🪙 "+s.price);const color=s.body||s.top;html+='<div class="shopItem"><div><b><span class="previewDot" style="background:'+color+'"></span>'+s.name+'</b><small>'+(s.rarity? s.rarity+" • ":"")+(owned?(sel?'Selecionado':'Comprado'):'Preço: '+price)+'</small></div><button class="'+((owned||(!s.keyPrice&&save.wallet>=s.price)||(s.keyPrice&&save.keys>=s.price))?'':'locked')+'" data-id="'+id+'">'+(owned?(sel?'OK':'Usar'):'Comprar')+'</button></div>'});
  html+='</div><div class="row"><button class="menuBtn" id="backBtn">VOLTAR</button></div>';card.innerHTML=html;
  document.getElementById("backBtn").onclick=showMenu;Array.from(card.querySelectorAll("[data-id]")).forEach(b=>b.onclick=()=>buy(type,b.dataset.id));
 }
 function buy(type,id){let isTheme=type==="themes",data=isTheme?themes:skins,s=data[id],owned=isTheme?save.ownedThemes.includes(id):save.owned.includes(id);if(owned){if(isTheme)save.theme=id;else save.skin=id;persist();shop(type);return}if(s.keyPrice){if(save.keys>=s.price){save.keys-=s.price;if(isTheme)save.ownedThemes.push(id);else save.owned.push(id);if(isTheme)save.theme=id;else save.skin=id;persist();hud();shop(type)}}else if(save.wallet>=s.price){save.wallet-=s.price;if(isTheme)save.ownedThemes.push(id);else save.owned.push(id);if(isTheme)save.theme=id;else save.skin=id;persist();hud();shop(type)}}
-function start(){state="play";overlay.style.display="none";score=0;coinsRun=0;keysRun=0;lives=3;frames=0;speed=2.7;difficulty=1;revived=false;pipes=[];coins=[];keys=[];powerups=[];particles=[];clouds=[];shield=0;magnet=0;slow=0;bird.x=W*.23;bird.y=H*.45;bird.vy=0;bird.inv=90;for(let i=0;i<8;i++)clouds.push({x:rand(0,W),y:rand(40,H-120),s:rand(.7,1.5),v:rand(.12,.35)});hud();}
+function start(){state="play";overlay.style.display="none";save.games++;persist();score=0;coinsRun=0;keysRun=0;lives=3;frames=0;speed=2.7;difficulty=1;revived=false;pipes=[];coins=[];keys=[];powerups=[];particles=[];clouds=[];shield=0;magnet=0;slow=0;bird.x=W*.23;bird.y=H*.45;bird.vy=0;bird.inv=90;for(let i=0;i<8;i++)clouds.push({x:rand(0,W),y:rand(40,H-120),s:rand(.7,1.5),v:rand(.12,.35)});hud();}
 function flap(){if(state==="menu"||state==="over"){start();return}if(state==="play"){bird.vy=bird.jump;for(let i=0;i<5;i++)particles.push({x:bird.x-10,y:bird.y+5,vx:rand(-3,-1),vy:rand(-1,1),life:20})}}
 function spawnPipe(){const gap=Math.max(H*.21,H*.32-difficulty*8),top=rand(78,H-gap-122),w=Math.max(58,W*.13),x=W+20;pipes.push({x,w,top,gap,passed:false});if(Math.random()<.88)coins.push({x:x+w/2,y:top+gap/2,r:13,taken:false});if(Math.random()<.11)keys.push({x:x+w/2+rand(-25,25),y:top+gap/2+rand(-40,40),r:15,taken:false});if(Math.random()<.14){const types=["heart","shield","magnet","slow"];powerups.push({x:x+w/2+rand(-30,30),y:top+gap/2+rand(-35,35),r:16,taken:false,type:types[Math.floor(Math.random()*types.length)]})}}
-function update(){if(state!=="play")return;frames++;difficulty=Math.min(8,1+score/16);let actualSpeed=speed;if(slow>0)actualSpeed*=.62;speed=Math.min(7.7,2.7+score*.058);bird.vy+=bird.gravity;bird.y+=bird.vy;bird.rot=Math.max(-.55,Math.min(1.2,bird.vy/8));if(bird.inv>0)bird.inv--;if(shield>0)shield--;if(magnet>0)magnet--;if(slow>0)slow--;if(frames%Math.max(58,96-Math.floor(difficulty*4))===0)spawnPipe();pipes.forEach(p=>{p.x-=actualSpeed;if(!p.passed&&p.x+p.w<bird.x){p.passed=true;score++;scoreEl.textContent=score}});pipes=pipes.filter(p=>p.x+p.w>-30);move(coins,actualSpeed);move(keys,actualSpeed);move(powerups,actualSpeed);coins.forEach(c=>{if(magnet>0&&Math.abs(c.x-bird.x)<150){c.x+=(bird.x-c.x)*.08;c.y+=(bird.y-c.y)*.08} if(!c.taken&&Math.hypot(bird.x-c.x,bird.y-c.y)<31){c.taken=true;coinsRun++;save.wallet++;score+=2;persist();hud();burst(c.x,c.y,true)}});keys.forEach(k=>{if(!k.taken&&Math.hypot(bird.x-k.x,bird.y-k.y)<34){k.taken=true;keysRun++;save.keys++;score+=6;persist();hud();burst(k.x,k.y,true);showPower("🔑 CHAVE!")}});powerups.forEach(p=>{if(!p.taken&&Math.hypot(bird.x-p.x,bird.y-p.y)<34){p.taken=true;applyPower(p.type);burst(p.x,p.y,true)}});coins=coins.filter(c=>!c.taken&&c.x>-40);keys=keys.filter(c=>!c.taken&&c.x>-40);powerups=powerups.filter(c=>!c.taken&&c.x>-40);particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.life--});particles=particles.filter(p=>p.life>0);clouds.forEach(c=>{c.x-=c.v*actualSpeed;if(c.x<-100){c.x=W+120;c.y=rand(50,H-140)}});if(bird.y-bird.r<0||bird.y+bird.r>H-72)hitDanger("queda");for(const p of pipes){if(bird.inv<=0&&(circleRect(bird.x,bird.y,bird.r,p.x,0,p.w,p.top)||circleRect(bird.x,bird.y,bird.r,p.x,p.top+p.gap,p.w,H-72-(p.top+p.gap)))){hitDanger("cano");break}}}
+function update(){if(state!=="play")return;frames++;difficulty=Math.min(8,1+score/16);let actualSpeed=speed;if(slow>0)actualSpeed*=.62;speed=Math.min(7.7,2.7+score*.058);bird.vy+=bird.gravity;bird.y+=bird.vy;bird.rot=Math.max(-.55,Math.min(1.2,bird.vy/8));if(bird.inv>0)bird.inv--;if(shield>0)shield--;if(magnet>0)magnet--;if(slow>0)slow--;if(frames%Math.max(58,96-Math.floor(difficulty*4))===0)spawnPipe();pipes.forEach(p=>{p.x-=actualSpeed;if(!p.passed&&p.x+p.w<bird.x){p.passed=true;score++;scoreEl.textContent=score}});pipes=pipes.filter(p=>p.x+p.w>-30);move(coins,actualSpeed);move(keys,actualSpeed);move(powerups,actualSpeed);coins.forEach(c=>{if(magnet>0&&Math.abs(c.x-bird.x)<150){c.x+=(bird.x-c.x)*.08;c.y+=(bird.y-c.y)*.08} if(!c.taken&&Math.hypot(bird.x-c.x,bird.y-c.y)<31){c.taken=true;coinsRun++;save.wallet++;save.totalCoins++;score+=2;persist();hud();burst(c.x,c.y,true)}});keys.forEach(k=>{if(!k.taken&&Math.hypot(bird.x-k.x,bird.y-k.y)<34){k.taken=true;keysRun++;save.keys++;save.totalKeys++;score+=6;persist();hud();burst(k.x,k.y,true);showPower("🔑 CHAVE!")}});powerups.forEach(p=>{if(!p.taken&&Math.hypot(bird.x-p.x,bird.y-p.y)<34){p.taken=true;applyPower(p.type);burst(p.x,p.y,true)}});coins=coins.filter(c=>!c.taken&&c.x>-40);keys=keys.filter(c=>!c.taken&&c.x>-40);powerups=powerups.filter(c=>!c.taken&&c.x>-40);particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.life--});particles=particles.filter(p=>p.life>0);clouds.forEach(c=>{c.x-=c.v*actualSpeed;if(c.x<-100){c.x=W+120;c.y=rand(50,H-140)}});if(bird.y-bird.r<0||bird.y+bird.r>H-72)hitDanger("queda");for(const p of pipes){if(bird.inv<=0&&(circleRect(bird.x,bird.y,bird.r,p.x,0,p.w,p.top)||circleRect(bird.x,bird.y,bird.r,p.x,p.top+p.gap,p.w,H-72-(p.top+p.gap)))){hitDanger("cano");break}}}
 function move(a,s){a.forEach(c=>c.x-=s)}function applyPower(t){if(t==="heart"){lives=Math.min(5,lives+1);hud();showPower("❤️ +1 VIDA")} if(t==="shield"){shield=520;showPower("🛡️ ESCUDO")} if(t==="magnet"){magnet=520;showPower("🧲 ÍMÃ")} if(t==="slow"){slow=430;showPower("🐢 LENTO")}}
 function burst(x,y,gold){for(let i=0;i<9;i++)particles.push({x,y,vx:rand(-2.5,2.5),vy:rand(-2.5,2.5),life:25,gold})}
 function hitDanger(reason){if(bird.inv>0)return;if(shield>0){shield=0;bird.inv=80;showPower("🛡️ DEFENDEU!");return}lives--;hud();if(lives>0){bird.y=H*.45;bird.vy=bird.jump;bird.inv=115;showPower("❤️ -1 VIDA")}else gameOver(reason)}
 function circleRect(cx,cy,cr,rx,ry,rw,rh){const x=Math.max(rx,Math.min(cx,rx+rw)),y=Math.max(ry,Math.min(cy,ry+rh)),dx=cx-x,dy=cy-y;return dx*dx+dy*dy<cr*cr}
 function gameOver(reason){if(state!=="play")return;state="over";save.xp+=score+coinsRun*2+keysRun*10;while(save.xp>=save.level*180){save.xp-=save.level*180;save.level++;save.wallet+=25}if(score>save.best)save.best=score;persist();const canCoin=save.wallet>=50&&!revived,canKey=save.keys>=1&&!revived;overlay.style.display="flex";card.innerHTML='<h1>'+(score>=save.best?'Novo Recorde!':'Fim de jogo')+'</h1><p>'+(reason==="cano"?'Você bateu no cano!':'O pássaro caiu!')+'</p><p>Pontos: <b>'+score+'</b><br>Moedas: <b>'+coinsRun+'</b> | Chaves: <b>'+keysRun+'</b><br>Carteira: <b>🪙 '+save.wallet+'</b> 🔑 <b>'+save.keys+'</b><br>Nível: <b>'+save.level+'</b></p><div class="row">'+(canCoin?'<button class="menuBtn green" id="reviveCoin">REVIVER - 50 🪙</button>':'')+(canKey?'<button class="menuBtn green" id="reviveKey">REVIVER - 1 🔑</button>':'')+'<button class="menuBtn alt" id="againBtn">JOGAR DE NOVO</button><button class="menuBtn" id="menuBtn">MENU</button></div>';if(canCoin)document.getElementById("reviveCoin").onclick=()=>revive("coin");if(canKey)document.getElementById("reviveKey").onclick=()=>revive("key");document.getElementById("againBtn").onclick=start;document.getElementById("menuBtn").onclick=showMenu;hud();}
-function revive(type){if(revived)return;if(type==="coin"){if(save.wallet<50)return;save.wallet-=50}else{if(save.keys<1)return;save.keys--}revived=true;persist();hud();lives=1;bird.y=H*.45;bird.vy=bird.jump;bird.inv=170;pipes=[];coins=[];keys=[];powerups=[];overlay.style.display="none";state="play"}
+function revive(type){if(revived)return;if(type==="coin"){if(save.wallet<50)return;save.wallet-=50}else{if(save.keys<1)return;save.keys--}revived=true;save.revives++;persist();hud();lives=1;bird.y=H*.45;bird.vy=bird.jump;bird.inv=170;pipes=[];coins=[];keys=[];powerups=[];overlay.style.display="none";state="play"}
 function draw(){sky();backgroundDetails();clouds.forEach(cloud);pipes.forEach(pipe);coins.forEach(coin);keys.forEach(keyDraw);powerups.forEach(powerDraw);ground();particles.forEach(effect);birdDraw();}
 function theme(){return themes[save.theme]||themes.sky}
 function sky(){const t=theme(),g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,t.top);g.addColorStop(.6,t.mid);g.addColorStop(1,t.bottom);ctx.fillStyle=g;ctx.fillRect(0,0,W,H)}
