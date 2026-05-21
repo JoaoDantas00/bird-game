@@ -1,39 +1,29 @@
-PÁSSARO REWARDS V7
+PÁSSARO REWARDS V8
 
-Novidades:
-- Cada troféu concluído libera uma caixa de presente.
-- Missões diárias também geram presente extra.
-- Presentes podem dar moedas, chave, vida, escudo, tartaruga ou ímã.
-- Novos mapas:
-  - Mapa do Amor
+Grande atualização:
+- Mais troféus e missões difíceis.
+- Recompensas maiores conforme o progresso.
+- Obstáculos específicos por mapa.
+- Mapas mais detalhados:
+  - Ruínas Antigas
+  - Fundo do Mar
   - Floresta
-  - Estádio de Futebol
+  - Estádio
+  - Espaço
+  - Fogo
+  - Zumbi
+  - Amor
   - Noite Artística
-  - Mapa Espacial
-- Mapa Espacial só pode ser usado se tiver o Pássaro Astronauta.
-- Novos pássaros:
-  - Pássaro Astronauta
-  - Pássaro Apaixonado
+- Novas skins:
+  - Pássaro Antigo
+  - Peixe Explorador
+  - Pássaro Dragão
+- Fundo do Mar exige Peixe Explorador.
+- Mapa Espacial exige Pássaro Astronauta.
 
-Para atualizar no GitHub:
+Para atualizar:
 1. Extraia o ZIP.
-2. Envie os arquivos para o mesmo repositório.
-3. Clique em Commit changes.
-4. Aguarde o GitHub Pages atualizar.
-
-
-CORREÇÃO SCROLL:
-- Menus longos agora podem ser arrastados/rolados no celular.
-- Loja, troféus e missões ganharam área de rolagem.
-
-
-AJUSTES:
-- Liga/desliga som.
-- Controle de brilho entre 40% e 100%.
-- Preferências salvas no aparelho.
-
-
-CORREÇÃO FINAL 2:
-- Corrigido erro que deixava a tela travada/embaçada.
-- Ajustes de brilho agora carregam corretamente.
-- Cache do PWA atualizado.
+2. Substitua os arquivos no GitHub.
+3. Faça Commit changes.
+4. Aguarde atualizar.
+5. Se o app antigo travar, remova da tela inicial e adicione novamente.

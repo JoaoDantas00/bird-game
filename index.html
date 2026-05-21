@@ -90,6 +90,11 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-acti
 .settingsSlider{width:100%;accent-color:#facc15;margin-top:10px}
 .settingsValue{color:#fde68a;font-weight:900}
 
+
+.eventBadge{display:inline-block;margin-top:5px;padding:4px 8px;border-radius:999px;background:rgba(96,165,250,.18);color:#bfdbfe;font-size:11px;font-weight:900}
+.rewardBig{color:#fde68a;font-weight:900}
+.diffBox{margin-top:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:18px;padding:12px;text-align:left;color:#dbeafe}
+
 </style>
 </head>
 <body>
@@ -119,7 +124,7 @@ const scoreEl=document.getElementById("score"),walletEl=document.getElementById(
 let save;try{save=JSON.parse(localStorage.getItem("birdRewardsV3Save")||"")}catch(e){save=null}
 if(!save)save={wallet:0,keys:0,best:0,skin:"zombie",owned:["zombie"],theme:"sky",ownedThemes:["sky"],level:1,xp:0,totalCoins:0,totalKeys:0,games:0,revives:0};
 if(!save.owned)save.owned=["zombie"]; if(!save.owned.includes("zombie"))save.owned.unshift("zombie"); if(save.skin==="yellow"||save.skin==="alvinegro"||save.skin==="blueclub"||save.skin==="redclub"||save.skin==="greenclub"||save.skin==="purple")save.skin="zombie";
-if(save.totalCoins===undefined)save.totalCoins=save.wallet||0; if(save.totalKeys===undefined)save.totalKeys=save.keys||0; if(save.games===undefined)save.games=0; if(save.revives===undefined)save.revives=0; if(!save.nick)save.nick="Jogador"; if(!save.ranking)save.ranking=[]; if(save.sound===undefined)save.sound=true; if(!save.daily)save.daily={date:"",coins:0,score:0,games:0,claimed:[]}; if(!save.gifts)save.gifts=[]; if(!save.inventory)save.inventory={shield:0,heart:0,slow:0,magnet:0}; if(!save.claimedTrophies)save.claimedTrophies=[]; if(save.brightness===undefined)save.brightness=100;
+if(save.totalCoins===undefined)save.totalCoins=save.wallet||0; if(save.totalKeys===undefined)save.totalKeys=save.keys||0; if(save.games===undefined)save.games=0; if(save.revives===undefined)save.revives=0; if(!save.nick)save.nick="Jogador"; if(!save.ranking)save.ranking=[]; if(save.sound===undefined)save.sound=true; if(!save.daily)save.daily={date:"",coins:0,score:0,games:0,claimed:[]}; if(!save.gifts)save.gifts=[]; if(!save.inventory)save.inventory={shield:0,heart:0,slow:0,magnet:0}; if(!save.claimedTrophies)save.claimedTrophies=[]; if(!save.mapStats)save.mapStats={}; if(!save.powerStats)save.powerStats={shield:0,heart:0,slow:0,magnet:0}; if(!save.maxKeysRun)save.maxKeysRun=0; if(!save.maxCoinsRun)save.maxCoinsRun=0; if(save.brightness===undefined)save.brightness=100;
 
 const skins={
  zombie:{name:"Pássaro Zumbi",rarity:"Temático",price:0,body:"#84cc16",wing:"#365314",themeIcon:"🧟",fx:"zombie"},
@@ -127,25 +132,30 @@ const skins={
  player:{name:"Pássaro Jogador",rarity:"Esportivo",price:180,body:"#f8fafc",wing:"#111827",themeIcon:"⚽",fx:"ball"},
  brazil:{name:"Pássaro Brasil Copa",rarity:"Torcida",price:220,body:"#facc15",wing:"#16a34a",themeIcon:"🇧🇷",fx:"brazil"},
  romantic:{name:"Pássaro Apaixonado",rarity:"Evento",price:260,body:"#fb7185",wing:"#f9a8d4",themeIcon:"💘",fx:"love"},
- elegant:{name:"Pássaro Elegante",rarity:"Raro",price:280,body:"#f8fafc",wing:"#111827",themeIcon:"🎩",fx:"elegant"},
- firebird:{name:"Pássaro de Fogo",rarity:"Épico",price:340,body:"#ef4444",wing:"#f97316",themeIcon:"🔥",fx:"fire"},
- spider:{name:"Pássaro Aranha",rarity:"Especial",price:420,body:"#dc2626",wing:"#111827",themeIcon:"🕷️",fx:"spider"},
- astronaut:{name:"Pássaro Astronauta",rarity:"Especial",price:520,body:"#e5e7eb",wing:"#60a5fa",themeIcon:"🚀",fx:"astronaut"},
+ ancient:{name:"Pássaro Antigo",rarity:"Histórico",price:300,body:"#d97706",wing:"#92400e",themeIcon:"🏛️",fx:"ancient"},
+ elegant:{name:"Pássaro Elegante",rarity:"Raro",price:320,body:"#f8fafc",wing:"#111827",themeIcon:"🎩",fx:"elegant"},
+ firebird:{name:"Pássaro de Fogo",rarity:"Épico",price:380,body:"#ef4444",wing:"#f97316",themeIcon:"🔥",fx:"fire"},
+ spider:{name:"Pássaro Aranha",rarity:"Especial",price:460,body:"#dc2626",wing:"#111827",themeIcon:"🕷️",fx:"spider"},
+ astronaut:{name:"Pássaro Astronauta",rarity:"Especial",price:540,body:"#e5e7eb",wing:"#60a5fa",themeIcon:"🚀",fx:"astronaut"},
+ fish:{name:"Peixe Explorador",rarity:"Aquático",price:580,body:"#38bdf8",wing:"#0ea5e9",themeIcon:"🐠",fx:"fish"},
+ dragon:{name:"Pássaro Dragão",rarity:"Mítico",price:5,keyPrice:true,body:"#16a34a",wing:"#ef4444",themeIcon:"🐉",fx:"dragon"},
  gold:{name:"Pássaro Dourado",rarity:"Lendário",price:3,keyPrice:true,body:"#fbbf24",wing:"#f59e0b",themeIcon:"👑",fx:"gold"}
 };
 const themes={
- sky:{name:"Céu Clássico",price:0,top:"#7dd3fc",mid:"#dbeafe",bottom:"#bfdbfe",pipe:"#16a34a",pipe2:"#22c55e"},
- night:{name:"Noite Estrelada",price:120,top:"#020617",mid:"#1e1b4b",bottom:"#312e81",pipe:"#334155",pipe2:"#64748b"},
- city:{name:"Cidade NY",price:180,top:"#60a5fa",mid:"#93c5fd",bottom:"#cbd5e1",pipe:"#475569",pipe2:"#94a3b8",city:true},
- fire:{name:"Fogo Sombrio",price:250,top:"#1c1917",mid:"#7f1d1d",bottom:"#f97316",pipe:"#7f1d1d",pipe2:"#ef4444",fire:true},
- zombie:{name:"Terra Zumbi",price:320,top:"#052e16",mid:"#365314",bottom:"#a3e635",pipe:"#166534",pipe2:"#65a30d",zombie:true},
- love:{name:"Mapa do Amor",price:260,top:"#f9a8d4",mid:"#fbcfe8",bottom:"#fdf2f8",pipe:"#db2777",pipe2:"#fb7185",love:true},
- forest:{name:"Floresta Viva",price:300,top:"#064e3b",mid:"#15803d",bottom:"#bbf7d0",pipe:"#166534",pipe2:"#22c55e",forest:true},
- stadium:{name:"Estádio de Futebol",price:340,top:"#38bdf8",mid:"#93c5fd",bottom:"#16a34a",pipe:"#0f172a",pipe2:"#f8fafc",stadium:true},
- vangogh:{name:"Noite Artística",price:420,top:"#1e3a8a",mid:"#312e81",bottom:"#facc15",pipe:"#1d4ed8",pipe2:"#fbbf24",vangogh:true},
- space:{name:"Mapa Espacial",price:600,top:"#020617",mid:"#111827",bottom:"#1e1b4b",pipe:"#6366f1",pipe2:"#a78bfa",space:true,requiresSkin:"astronaut"}
+ sky:{name:"Céu Clássico",price:0,diff:1,top:"#7dd3fc",mid:"#dbeafe",bottom:"#bfdbfe",pipe:"#16a34a",pipe2:"#22c55e"},
+ night:{name:"Noite Estrelada",price:120,diff:1.1,top:"#020617",mid:"#1e1b4b",bottom:"#312e81",pipe:"#334155",pipe2:"#64748b"},
+ city:{name:"Cidade NY",price:180,diff:1.2,top:"#60a5fa",mid:"#93c5fd",bottom:"#cbd5e1",pipe:"#475569",pipe2:"#94a3b8",city:true},
+ fire:{name:"Fogo Sombrio",price:250,diff:1.35,top:"#1c1917",mid:"#7f1d1d",bottom:"#f97316",pipe:"#7f1d1d",pipe2:"#ef4444",fire:true,obstacle:"fireball"},
+ zombie:{name:"Terra Zumbi",price:320,diff:1.35,top:"#052e16",mid:"#365314",bottom:"#a3e635",pipe:"#166534",pipe2:"#65a30d",zombie:true,obstacle:"zombiehand"},
+ love:{name:"Mapa do Amor",price:260,diff:1.15,top:"#f9a8d4",mid:"#fbcfe8",bottom:"#fdf2f8",pipe:"#db2777",pipe2:"#fb7185",love:true},
+ forest:{name:"Floresta Viva",price:300,diff:1.25,top:"#064e3b",mid:"#15803d",bottom:"#bbf7d0",pipe:"#166534",pipe2:"#22c55e",forest:true,obstacle:"branch"},
+ stadium:{name:"Estádio de Futebol",price:340,diff:1.3,top:"#38bdf8",mid:"#93c5fd",bottom:"#16a34a",pipe:"#0f172a",pipe2:"#f8fafc",stadium:true,obstacle:"ball"},
+ vangogh:{name:"Noite Artística",price:420,diff:1.45,top:"#1e3a8a",mid:"#312e81",bottom:"#facc15",pipe:"#1d4ed8",pipe2:"#fbbf24",vangogh:true},
+ space:{name:"Mapa Espacial",price:600,diff:1.6,top:"#020617",mid:"#111827",bottom:"#1e1b4b",pipe:"#6366f1",pipe2:"#a78bfa",space:true,obstacle:"meteor",requiresSkin:"astronaut"},
+ ancient:{name:"Ruínas Antigas",price:380,diff:1.3,top:"#92400e",mid:"#d97706",bottom:"#fde68a",pipe:"#78350f",pipe2:"#f59e0b",ancient:true,obstacle:"arrow"},
+ ocean:{name:"Fundo do Mar",price:650,diff:1.55,top:"#0c4a6e",mid:"#0284c7",bottom:"#67e8f9",pipe:"#0f766e",pipe2:"#2dd4bf",ocean:true,obstacle:"jelly",requiresSkin:"fish"}
 };
-let state="menu",score=0,coinsRun=0,keysRun=0,lives=3,frames=0,speed=2.7,difficulty=1,revived=false,pipes=[],coins=[],keys=[],powerups=[],clouds=[],particles=[],shield=0,magnet=0,slow=0;
+let state="menu",score=0,coinsRun=0,keysRun=0,lives=3,frames=0,speed=2.7,difficulty=1,revived=false,pipes=[],coins=[],keys=[],powerups=[],hazards=[],clouds=[],particles=[],shield=0,magnet=0,slow=0;
 const bird={x:95,y:260,r:17,vy:0,gravity:.42,jump:-7.3,rot:0,inv:0};
 function applyBrightness(){if(typeof brightnessLayer!=="undefined"&&brightnessLayer){brightnessLayer.style.opacity=String((100-(save.brightness||100))/100*.65)}}
 function persist(){localStorage.setItem("birdRewardsV3Save",JSON.stringify(save));applyBrightness()}
@@ -168,9 +178,9 @@ function showMenu(){
  '<button class="menuTile" id="trophyBtn"><span>🎖️</span>Troféus<small>Conquistas</small></button>'+
  '<button class="menuTile" id="shareBtn"><span>📤</span>Compartilhar<small>Seu recorde</small></button>'+
  '<button class="menuTile" id="settingsBtn"><span>⚙️</span>Ajustes<small>Som</small></button>'+
- '<button class="menuTile" id="infoBtn"><span>✨</span>Novidades<small>V7</small></button>'+
+ '<button class="menuTile" id="infoBtn"><span>✨</span>Novidades<small>V8</small></button>'+
  '</div>'+
- '<div class="newsBox"><b>Novidades:</b> caixas de presente, novos mapas e pássaros especiais. Continue coletando moedas para desbloquear tudo.</div>'+
+ '<div class="newsBox"><b>Novidades:</b> mapas vivos, obstáculos únicos e troféus avançados. Continue coletando moedas para desbloquear tudo.</div>'+
  '<p style="font-size:12px;color:#fde68a">Mobile/PWA: publique no GitHub Pages e instale pela Tela de Início.</p>';
  document.getElementById("playBtn").onclick=start;
  document.getElementById("skinBtn").onclick=()=>shop("skins");
@@ -262,19 +272,21 @@ function updateRanking(){
 
 
 function rewardGift(reason){
+ const hard=trophyList().filter(t=>t.ok).length;
+ const bonus=hard>=15?2:hard>=8?1:0;
  const pool=[
-  {type:"coins",amount:25,label:"25 moedas 🪙"},
-  {type:"coins",amount:50,label:"50 moedas 🪙"},
-  {type:"key",amount:1,label:"1 chave 🔑"},
-  {type:"shield",amount:1,label:"1 escudo 🛡️"},
-  {type:"heart",amount:1,label:"1 vida ❤️"},
-  {type:"slow",amount:1,label:"1 tartaruga 🐢"},
-  {type:"magnet",amount:1,label:"1 ímã 🧲"}
+  {type:"coins",amount:25+bonus*25,label:(25+bonus*25)+" moedas 🪙"},
+  {type:"coins",amount:50+bonus*35,label:(50+bonus*35)+" moedas 🪙"},
+  {type:"key",amount:1+bonus,label:(1+bonus)+" chave(s) 🔑"},
+  {type:"shield",amount:1+bonus,label:(1+bonus)+" escudo(s) 🛡️"},
+  {type:"heart",amount:1+bonus,label:(1+bonus)+" vida(s) ❤️"},
+  {type:"slow",amount:1+bonus,label:(1+bonus)+" tartaruga(s) 🐢"},
+  {type:"magnet",amount:1+bonus,label:(1+bonus)+" ímã(s) 🧲"}
  ];
  const reward=pool[Math.floor(Math.random()*pool.length)];
  if(reward.type==="coins")save.wallet+=reward.amount;
  if(reward.type==="key")save.keys+=reward.amount;
- if(["shield","heart","slow","magnet"].includes(reward.type))save.inventory[reward.type]=(save.inventory[reward.type]||0)+reward.amount;
+ if(["shield","heart","slow","magnet"].includes(reward.type)){save.inventory[reward.type]=(save.inventory[reward.type]||0)+reward.amount;save.powerStats[reward.type]=(save.powerStats[reward.type]||0)+reward.amount;}
  save.gifts.push({reason:reason,label:reward.label,date:new Date().toLocaleDateString()});
  persist();hud();
  return reward;
@@ -288,13 +300,29 @@ function openGiftScreen(reason){
 function trophyList(){
  return [
   {id:"first",icon:"🎮",name:"Primeiro Voo",desc:"Jogue sua primeira partida.",ok:save.games>=1},
-  {id:"score50",icon:"🏆",name:"Subindo Alto",desc:"Faça 50 pontos.",ok:save.best>=50},
-  {id:"score100",icon:"👑",name:"Mestre dos Canos",desc:"Faça 100 pontos.",ok:save.best>=100},
-  {id:"coins100",icon:"🪙",name:"Colecionador",desc:"Junte 100 moedas no total.",ok:save.totalCoins>=100},
-  {id:"keys5",icon:"🔑",name:"Caçador de Chaves",desc:"Junte 5 chaves no total.",ok:save.totalKeys>=5},
+  {id:"score25",icon:"🥉",name:"Primeiros 25",desc:"Faça 25 pontos.",ok:save.best>=25},
+  {id:"score50",icon:"🥈",name:"Subindo Alto",desc:"Faça 50 pontos.",ok:save.best>=50},
+  {id:"score100",icon:"🥇",name:"Mestre dos Canos",desc:"Faça 100 pontos.",ok:save.best>=100},
+  {id:"score200",icon:"👑",name:"Lenda dos Céus",desc:"Faça 200 pontos.",ok:save.best>=200},
+  {id:"coins100",icon:"🪙",name:"Colecionador I",desc:"Junte 100 moedas no total.",ok:save.totalCoins>=100},
+  {id:"coins500",icon:"💰",name:"Colecionador II",desc:"Junte 500 moedas no total.",ok:save.totalCoins>=500},
+  {id:"coins1000",icon:"🤑",name:"Tesouro Vivo",desc:"Junte 1000 moedas no total.",ok:save.totalCoins>=1000},
+  {id:"keys5",icon:"🔑",name:"Caçador de Chaves I",desc:"Junte 5 chaves no total.",ok:save.totalKeys>=5},
+  {id:"keys20",icon:"🗝️",name:"Caçador de Chaves II",desc:"Junte 20 chaves no total.",ok:save.totalKeys>=20},
+  {id:"runKeys3",icon:"🔐",name:"Chaveiro da Partida",desc:"Pegue 3 chaves em uma única partida.",ok:save.maxKeysRun>=3},
+  {id:"runCoins50",icon:"🏦",name:"Chuva de Moedas",desc:"Pegue 50 moedas em uma única partida.",ok:save.maxCoinsRun>=50},
   {id:"skins3",icon:"🐦",name:"Estiloso",desc:"Desbloqueie 3 pássaros.",ok:save.owned.length>=3},
+  {id:"skins7",icon:"🌈",name:"Colecionador de Skins",desc:"Desbloqueie 7 pássaros.",ok:save.owned.length>=7},
   {id:"themes2",icon:"🌎",name:"Viajante",desc:"Desbloqueie 2 paisagens.",ok:save.ownedThemes.length>=2},
-  {id:"revive",icon:"❤️",name:"Segunda Chance",desc:"Use revive uma vez.",ok:save.revives>=1}
+  {id:"themes6",icon:"🧭",name:"Explorador",desc:"Desbloqueie 6 paisagens.",ok:save.ownedThemes.length>=6},
+  {id:"space",icon:"🚀",name:"Astronauta",desc:"Desbloqueie o mapa espacial.",ok:save.ownedThemes.includes("space")},
+  {id:"ocean",icon:"🌊",name:"Mergulho Profundo",desc:"Desbloqueie o fundo do mar.",ok:save.ownedThemes.includes("ocean")},
+  {id:"ancient",icon:"🏛️",name:"Relíquia Antiga",desc:"Desbloqueie as ruínas antigas.",ok:save.ownedThemes.includes("ancient")},
+  {id:"revive",icon:"❤️",name:"Segunda Chance",desc:"Use revive uma vez.",ok:save.revives>=1},
+  {id:"games25",icon:"🔥",name:"Persistente",desc:"Jogue 25 partidas.",ok:save.games>=25},
+  {id:"games100",icon:"💎",name:"Viciado no Voo",desc:"Jogue 100 partidas.",ok:save.games>=100},
+  {id:"shield10",icon:"🛡️",name:"Guardião",desc:"Use ou ganhe 10 escudos.",ok:(save.powerStats&&save.powerStats.shield>=10)||(save.inventory&&save.inventory.shield>=10)},
+  {id:"slow10",icon:"🐢",name:"Mestre do Tempo",desc:"Use ou ganhe 10 tartarugas.",ok:(save.powerStats&&save.powerStats.slow>=10)||(save.inventory&&save.inventory.slow>=10)}
  ];
 }
 function showTrophies(){
@@ -330,36 +358,73 @@ function showRanking(){
  document.getElementById("backBtn").onclick=showMenu;
 }
 function showNews(){
- card.innerHTML='<h1>✨ Novidades V7</h1><p>Essa versão adiciona mais coleção e recompensas.</p><p>✅ Caixas de presente em troféus<br>✅ Presentes em missões diárias<br>✅ Pássaro Astronauta<br>✅ Pássaro Apaixonado<br>✅ Mapa do Amor<br>✅ Floresta<br>✅ Estádio de Futebol<br>✅ Noite Artística<br>✅ Mapa Espacial bloqueado pelo Astronauta</p><p>Próximos passos: usar itens do inventário antes da partida, animação de abrir caixa e ranking online.</p><div class="row"><button class="menuBtn" id="backBtn">VOLTAR</button></div>';
+ card.innerHTML='<h1>✨ Novidades V8</h1><p>Grande atualização de conteúdo e dificuldade.</p><p>✅ Mais missões e troféus<br>✅ Recompensas maiores conforme o progresso<br>✅ Obstáculos exclusivos por mapa<br>✅ Mapa Antigo + Pássaro Antigo<br>✅ Fundo do Mar + Peixe Explorador<br>✅ Pássaro Dragão mítico<br>✅ Mapas mais detalhados<br>✅ Fogo, zumbis, estádio, floresta, espaço e oceano mais vivos</p><div class="diffBox"><b>Regra nova:</b> mapas mais difíceis têm obstáculos próprios e dão mais moedas. Quanto maior o desafio, melhor a recompensa.</div><div class="row"><button class="menuBtn" id="backBtn">VOLTAR</button></div>';
  document.getElementById("backBtn").onclick=showMenu;
 }
 
 function shop(type){
  let isTheme=type==="themes";
  let data=isTheme?themes:skins;
- let html='<h1>'+(isTheme?'Paisagens':'Pássaros')+'</h1><p>'+(isTheme?'Compre cenários diferentes com moedas.':'Colecione pássaros temáticos: zumbi, futurista, jogador, Brasil, elegante, fogo e aranha.')+'</p><div class="shop">';
- Object.keys(data).forEach(id=>{const s=data[id];const owned=isTheme?save.ownedThemes.includes(id):save.owned.includes(id);const sel=isTheme?save.theme===id:save.skin===id;const price=s.keyPrice?("🔑 "+s.price):("🪙 "+s.price);const color=s.body||s.top;const lockedReq=isTheme&&s.requiresSkin&&!save.owned.includes(s.requiresSkin);const reqText=lockedReq?'<span class="lockNote">Requer: Pássaro Astronauta</span>':'';html+='<div class="shopItem"><div><b><span class="previewDot" style="background:'+color+'"></span>'+s.name+'</b><small>'+(s.rarity? s.rarity+" • ":"")+(owned?(sel?'Selecionado':'Comprado'):'Preço: '+price)+reqText+'</small></div><button class="'+((owned||(!lockedReq&&((!s.keyPrice&&save.wallet>=s.price)||(s.keyPrice&&save.keys>=s.price))))?'':'locked')+'" data-id="'+id+'">'+(owned?(sel?'OK':'Usar'):(lockedReq?'Bloq.':'Comprar'))+'</button></div>'});
+ let html='<h1>'+(isTheme?'Paisagens':'Pássaros')+'</h1><p>'+(isTheme?'Compre cenários com dificuldade e recompensas diferentes.':'Colecione pássaros temáticos, míticos, aquáticos e especiais.')+'</p><div class="shop">';
+ Object.keys(data).forEach(id=>{const s=data[id];const owned=isTheme?save.ownedThemes.includes(id):save.owned.includes(id);const sel=isTheme?save.theme===id:save.skin===id;const price=s.keyPrice?("🔑 "+s.price):("🪙 "+s.price);const color=s.body||s.top;const lockedReq=isTheme&&s.requiresSkin&&!save.owned.includes(s.requiresSkin);const reqText=lockedReq?'<span class="lockNote">'+(s.requiresSkin==='fish'?'Requer: Peixe Explorador':'Requer: Pássaro Astronauta')+'</span>':'';html+='<div class="shopItem"><div><b><span class="previewDot" style="background:'+color+'"></span>'+s.name+'</b><small>'+(s.rarity? s.rarity+" • ":"")+(owned?(sel?'Selecionado':'Comprado'):'Preço: '+price)+(isTheme&&s.diff?' • Dificuldade x'+s.diff:'')+reqText+'</small></div><button class="'+((owned||(!lockedReq&&((!s.keyPrice&&save.wallet>=s.price)||(s.keyPrice&&save.keys>=s.price))))?'':'locked')+'" data-id="'+id+'">'+(owned?(sel?'OK':'Usar'):(lockedReq?'Bloq.':'Comprar'))+'</button></div>'});
  html+='</div><div class="row"><button class="menuBtn" id="backBtn">VOLTAR</button></div>';card.innerHTML=html;
  document.getElementById("backBtn").onclick=showMenu;Array.from(card.querySelectorAll("[data-id]")).forEach(b=>b.onclick=()=>buy(type,b.dataset.id));
 }
 function buy(type,id){let isTheme=type==="themes",data=isTheme?themes:skins,s=data[id],owned=isTheme?save.ownedThemes.includes(id):save.owned.includes(id);if(isTheme&&s.requiresSkin&&!save.owned.includes(s.requiresSkin)){showPower("🔒 PRECISA DO ASTRONAUTA");return}if(owned){if(isTheme)save.theme=id;else save.skin=id;persist();shop(type);return}if(s.keyPrice){if(save.keys>=s.price){save.keys-=s.price;if(isTheme)save.ownedThemes.push(id);else save.owned.push(id);if(isTheme)save.theme=id;else save.skin=id;persist();hud();shop(type)}}else if(save.wallet>=s.price){save.wallet-=s.price;if(isTheme)save.ownedThemes.push(id);else save.owned.push(id);if(isTheme)save.theme=id;else save.skin=id;persist();hud();shop(type)}} 
-function start(){state="play";overlay.style.display="none";checkDaily();save.games++;save.daily.games++;persist();score=0;coinsRun=0;keysRun=0;lives=3;frames=0;speed=2.7;difficulty=1;revived=false;pipes=[];coins=[];keys=[];powerups=[];particles=[];clouds=[];shield=0;magnet=0;slow=0;bird.x=W*.23;bird.y=H*.45;bird.vy=0;bird.inv=90;for(let i=0;i<8;i++)clouds.push({x:rand(0,W),y:rand(40,H-120),s:rand(.7,1.5),v:rand(.12,.35)});hud();}
+function start(){state="play";overlay.style.display="none";checkDaily();save.games++;save.daily.games++;const th=theme();save.mapStats[save.theme]=(save.mapStats[save.theme]||0)+1;persist();score=0;coinsRun=0;keysRun=0;lives=3;frames=0;speed=2.7;difficulty=1;revived=false;pipes=[];coins=[];keys=[];powerups=[];hazards=[];particles=[];hazards=[];clouds=[];shield=0;magnet=0;slow=0;bird.x=W*.23;bird.y=H*.45;bird.vy=0;bird.inv=90;for(let i=0;i<8;i++)clouds.push({x:rand(0,W),y:rand(40,H-120),s:rand(.7,1.5),v:rand(.12,.35)});hud();}
 function flap(){if(state==="menu"||state==="over"){start();return}if(state==="play"){bird.vy=bird.jump;for(let i=0;i<5;i++)particles.push({x:bird.x-10,y:bird.y+5,vx:rand(-3,-1),vy:rand(-1,1),life:20})}}
 function spawnPipe(){const gap=Math.max(H*.21,H*.32-difficulty*8),top=rand(78,H-gap-122),w=Math.max(58,W*.13),x=W+20;pipes.push({x,w,top,gap,passed:false});if(Math.random()<.88)coins.push({x:x+w/2,y:top+gap/2,r:13,taken:false});if(Math.random()<.11)keys.push({x:x+w/2+rand(-25,25),y:top+gap/2+rand(-40,40),r:15,taken:false});if(Math.random()<.14){const types=["heart","shield","magnet","slow"];powerups.push({x:x+w/2+rand(-30,30),y:top+gap/2+rand(-35,35),r:16,taken:false,type:types[Math.floor(Math.random()*types.length)]})}}
-function update(){if(state!=="play")return;frames++;difficulty=Math.min(8,1+score/16);let actualSpeed=speed;if(slow>0)actualSpeed*=.62;speed=Math.min(7.7,2.7+score*.058);bird.vy+=bird.gravity;bird.y+=bird.vy;bird.rot=Math.max(-.55,Math.min(1.2,bird.vy/8));if(bird.inv>0)bird.inv--;if(shield>0)shield--;if(magnet>0)magnet--;if(slow>0)slow--;if(frames%Math.max(58,96-Math.floor(difficulty*4))===0)spawnPipe();pipes.forEach(p=>{p.x-=actualSpeed;if(!p.passed&&p.x+p.w<bird.x){p.passed=true;score++;scoreEl.textContent=score}});pipes=pipes.filter(p=>p.x+p.w>-30);move(coins,actualSpeed);move(keys,actualSpeed);move(powerups,actualSpeed);coins.forEach(c=>{if(magnet>0&&Math.abs(c.x-bird.x)<150){c.x+=(bird.x-c.x)*.08;c.y+=(bird.y-c.y)*.08} if(!c.taken&&Math.hypot(bird.x-c.x,bird.y-c.y)<31){c.taken=true;coinsRun++;save.wallet++;save.totalCoins++;save.daily.coins++;score+=2;persist();hud();burst(c.x,c.y,true);beep(820,45)}});keys.forEach(k=>{if(!k.taken&&Math.hypot(bird.x-k.x,bird.y-k.y)<34){k.taken=true;keysRun++;save.keys++;save.totalKeys++;score+=6;persist();hud();burst(k.x,k.y,true);showPower("🔑 CHAVE!");beep(1100,70)}});powerups.forEach(p=>{if(!p.taken&&Math.hypot(bird.x-p.x,bird.y-p.y)<34){p.taken=true;applyPower(p.type);burst(p.x,p.y,true)}});coins=coins.filter(c=>!c.taken&&c.x>-40);keys=keys.filter(c=>!c.taken&&c.x>-40);powerups=powerups.filter(c=>!c.taken&&c.x>-40);particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.life--});particles=particles.filter(p=>p.life>0);clouds.forEach(c=>{c.x-=c.v*actualSpeed;if(c.x<-100){c.x=W+120;c.y=rand(50,H-140)}});if(bird.y-bird.r<0||bird.y+bird.r>H-72)hitDanger("queda");for(const p of pipes){if(bird.inv<=0&&(circleRect(bird.x,bird.y,bird.r,p.x,0,p.w,p.top)||circleRect(bird.x,bird.y,bird.r,p.x,p.top+p.gap,p.w,H-72-(p.top+p.gap)))){hitDanger("cano");break}}}
+
+function spawnHazard(){
+ const t=theme();
+ if(!t.obstacle)return;
+ const type=t.obstacle;
+ let h={type,x:W+30,y:rand(90,H-150),r:18,w:36,h:36,vy:0,speed:rand(3.2,5.2)*(t.diff||1)};
+ if(type==="zombiehand"){h.y=H-100;h.w=38;h.h=55}
+ if(type==="branch"){h.y=rand(95,H-210);h.w=70;h.h=18}
+ if(type==="ball"){h.r=15;h.y=rand(120,H-180)}
+ if(type==="meteor"){h.r=20;h.y=rand(80,H-230);h.vy=rand(.4,1.2)}
+ if(type==="arrow"){h.w=62;h.h=14;h.y=rand(110,H-200)}
+ if(type==="jelly"){h.r=20;h.y=rand(120,H-190);h.vy=Math.sin(frames/20)*1.2}
+ hazards.push(h);
+}
+function updateHazards(spd){
+ if(frames>240 && frames%Math.max(95,165-Math.floor(difficulty*5))===0)spawnHazard();
+ hazards.forEach(h=>{h.x-=h.speed||spd;if(h.type==="meteor")h.y+=h.vy;if(h.type==="jelly")h.y+=Math.sin(frames/18)*1.5;});
+ hazards=hazards.filter(h=>h.x>-90);
+ for(const h of hazards){
+  const hw=h.w||h.r*2,hh=h.h||h.r*2,hx=h.x-hw/2,hy=h.y-hh/2;
+  if(bird.inv<=0&&circleRect(bird.x,bird.y,bird.r,hx,hy,hw,hh)){hitDanger(h.type);break}
+ }
+}
+
+function update(){if(state!=="play")return;frames++;difficulty=Math.min(8,1+score/16)*(theme().diff||1);let actualSpeed=speed;if(slow>0)actualSpeed*=.62;speed=Math.min(7.7,2.7+score*.058);bird.vy+=bird.gravity;bird.y+=bird.vy;bird.rot=Math.max(-.55,Math.min(1.2,bird.vy/8));if(bird.inv>0)bird.inv--;if(shield>0)shield--;if(magnet>0)magnet--;if(slow>0)slow--;if(frames%Math.max(58,96-Math.floor(difficulty*4))===0)spawnPipe();pipes.forEach(p=>{p.x-=actualSpeed;if(!p.passed&&p.x+p.w<bird.x){p.passed=true;score++;scoreEl.textContent=score}});pipes=pipes.filter(p=>p.x+p.w>-30);move(coins,actualSpeed);move(keys,actualSpeed);move(powerups,actualSpeed);updateHazards(actualSpeed);coins.forEach(c=>{if(magnet>0&&Math.abs(c.x-bird.x)<150){c.x+=(bird.x-c.x)*.08;c.y+=(bird.y-c.y)*.08} if(!c.taken&&Math.hypot(bird.x-c.x,bird.y-c.y)<31){c.taken=true;coinsRun++;let coinGain=Math.max(1,Math.floor(theme().diff||1));save.wallet+=coinGain;save.totalCoins+=coinGain;save.daily.coins+=coinGain;score+=2;persist();hud();burst(c.x,c.y,true);beep(820,45)}});keys.forEach(k=>{if(!k.taken&&Math.hypot(bird.x-k.x,bird.y-k.y)<34){k.taken=true;keysRun++;save.keys++;save.totalKeys++;score+=6;persist();hud();burst(k.x,k.y,true);showPower("🔑 CHAVE!");beep(1100,70)}});powerups.forEach(p=>{if(!p.taken&&Math.hypot(bird.x-p.x,bird.y-p.y)<34){p.taken=true;applyPower(p.type);burst(p.x,p.y,true)}});coins=coins.filter(c=>!c.taken&&c.x>-40);keys=keys.filter(c=>!c.taken&&c.x>-40);powerups=powerups.filter(c=>!c.taken&&c.x>-40);particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.life--});particles=particles.filter(p=>p.life>0);clouds.forEach(c=>{c.x-=c.v*actualSpeed;if(c.x<-100){c.x=W+120;c.y=rand(50,H-140)}});if(bird.y-bird.r<0||bird.y+bird.r>H-72)hitDanger("queda");for(const p of pipes){if(bird.inv<=0&&(circleRect(bird.x,bird.y,bird.r,p.x,0,p.w,p.top)||circleRect(bird.x,bird.y,bird.r,p.x,p.top+p.gap,p.w,H-72-(p.top+p.gap)))){hitDanger("cano");break}}}
 function move(a,s){a.forEach(c=>c.x-=s)}function applyPower(t){if(t==="heart"){lives=Math.min(5,lives+1);hud();showPower("❤️ +1 VIDA")} if(t==="shield"){shield=520;showPower("🛡️ ESCUDO")} if(t==="magnet"){magnet=520;showPower("🧲 ÍMÃ")} if(t==="slow"){slow=430;showPower("🐢 LENTO")}}
 function burst(x,y,gold){for(let i=0;i<9;i++)particles.push({x,y,vx:rand(-2.5,2.5),vy:rand(-2.5,2.5),life:25,gold})}
 function hitDanger(reason){if(bird.inv>0)return;if(shield>0){shield=0;bird.inv=80;showPower("🛡️ DEFENDEU!");return}lives--;hud();if(lives>0){bird.y=H*.45;bird.vy=bird.jump;bird.inv=115;showPower("❤️ -1 VIDA")}else gameOver(reason)}
 function circleRect(cx,cy,cr,rx,ry,rw,rh){const x=Math.max(rx,Math.min(cx,rx+rw)),y=Math.max(ry,Math.min(cy,ry+rh)),dx=cx-x,dy=cy-y;return dx*dx+dy*dy<cr*cr}
-function gameOver(reason){if(state!=="play")return;state="over";save.xp+=score+coinsRun*2+keysRun*10;while(save.xp>=save.level*180){save.xp-=save.level*180;save.level++;save.wallet+=25}if(score>save.daily.score)save.daily.score=score;if(score>save.best)save.best=score;updateRanking();persist();beep(180,110);const canCoin=save.wallet>=50&&!revived,canKey=save.keys>=1&&!revived;overlay.style.display="flex";card.innerHTML='<h1>'+(score>=save.best?'Novo Recorde!':'Fim de jogo')+'</h1><p>'+(reason==="cano"?'Você bateu no cano!':'O pássaro caiu!')+'</p><p>Pontos: <b>'+score+'</b><br>Moedas: <b>'+coinsRun+'</b> | Chaves: <b>'+keysRun+'</b><br>Carteira: <b>🪙 '+save.wallet+'</b> 🔑 <b>'+save.keys+'</b><br>Nível: <b>'+save.level+'</b></p><div class="row">'+(canCoin?'<button class="menuBtn green" id="reviveCoin">REVIVER - 50 🪙</button>':'')+(canKey?'<button class="menuBtn green" id="reviveKey">REVIVER - 1 🔑</button>':'')+'<button class="menuBtn alt" id="againBtn">JOGAR DE NOVO</button><button class="menuBtn" id="menuBtn">MENU</button></div>';if(canCoin)document.getElementById("reviveCoin").onclick=()=>revive("coin");if(canKey)document.getElementById("reviveKey").onclick=()=>revive("key");document.getElementById("againBtn").onclick=start;document.getElementById("menuBtn").onclick=showMenu;hud();}
-function revive(type){if(revived)return;if(type==="coin"){if(save.wallet<50)return;save.wallet-=50}else{if(save.keys<1)return;save.keys--}revived=true;save.revives++;persist();hud();lives=1;bird.y=H*.45;bird.vy=bird.jump;bird.inv=170;pipes=[];coins=[];keys=[];powerups=[];overlay.style.display="none";state="play"}
-function draw(){sky();backgroundDetails();clouds.forEach(cloud);pipes.forEach(pipe);coins.forEach(coin);keys.forEach(keyDraw);powerups.forEach(powerDraw);ground();particles.forEach(effect);birdDraw();}
+function gameOver(reason){if(state!=="play")return;state="over";save.xp+=score+coinsRun*2+keysRun*10;while(save.xp>=save.level*180){save.xp-=save.level*180;save.level++;save.wallet+=25}if(keysRun>save.maxKeysRun)save.maxKeysRun=keysRun;if(coinsRun>save.maxCoinsRun)save.maxCoinsRun=coinsRun;if(score>save.daily.score)save.daily.score=score;if(score>save.best)save.best=score;updateRanking();persist();beep(180,110);const canCoin=save.wallet>=50&&!revived,canKey=save.keys>=1&&!revived;overlay.style.display="flex";card.innerHTML='<h1>'+(score>=save.best?'Novo Recorde!':'Fim de jogo')+'</h1><p>'+(reason==="cano"?'Você bateu no cano!':'O pássaro caiu!')+'</p><p>Pontos: <b>'+score+'</b><br>Moedas: <b>'+coinsRun+'</b> | Chaves: <b>'+keysRun+'</b><br>Carteira: <b>🪙 '+save.wallet+'</b> 🔑 <b>'+save.keys+'</b><br>Nível: <b>'+save.level+'</b></p><div class="row">'+(canCoin?'<button class="menuBtn green" id="reviveCoin">REVIVER - 50 🪙</button>':'')+(canKey?'<button class="menuBtn green" id="reviveKey">REVIVER - 1 🔑</button>':'')+'<button class="menuBtn alt" id="againBtn">JOGAR DE NOVO</button><button class="menuBtn" id="menuBtn">MENU</button></div>';if(canCoin)document.getElementById("reviveCoin").onclick=()=>revive("coin");if(canKey)document.getElementById("reviveKey").onclick=()=>revive("key");document.getElementById("againBtn").onclick=start;document.getElementById("menuBtn").onclick=showMenu;hud();}
+function revive(type){if(revived)return;if(type==="coin"){if(save.wallet<50)return;save.wallet-=50}else{if(save.keys<1)return;save.keys--}revived=true;save.revives++;persist();hud();lives=1;bird.y=H*.45;bird.vy=bird.jump;bird.inv=170;pipes=[];coins=[];keys=[];powerups=[];hazards=[];overlay.style.display="none";state="play"}
+function draw(){sky();backgroundDetails();clouds.forEach(cloud);pipes.forEach(pipe);hazards.forEach(hazardDraw);coins.forEach(coin);keys.forEach(keyDraw);powerups.forEach(powerDraw);ground();particles.forEach(effect);birdDraw();}
 function theme(){return themes[save.theme]||themes.sky}
 function sky(){const t=theme(),g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,t.top);g.addColorStop(.6,t.mid);g.addColorStop(1,t.bottom);ctx.fillStyle=g;ctx.fillRect(0,0,W,H)}
 function backgroundDetails(){const t=theme();if(t.night){} if(save.theme==="night"){ctx.fillStyle="rgba(255,255,255,.85)";for(let i=0;i<45;i++){ctx.fillRect((i*83+frames*.08)%W,(i*47)%Math.max(100,H-100),2,2)}ctx.fillStyle="#fef3c7";ctx.beginPath();ctx.arc(W-75,95,28,0,Math.PI*2);ctx.fill()} if(t.city){for(let i=0;i<9;i++){let bw=W/9+8,bh=rand(90,220),x=i*(W/8)-20,y=H-72-bh;ctx.fillStyle=i%2?"#334155":"#475569";ctx.fillRect(x,y,bw,bh);ctx.fillStyle="#fde68a";for(let yy=y+20;yy<H-90;yy+=28)for(let xx=x+12;xx<x+bw-10;xx+=22)ctx.fillRect(xx,yy,8,10)}} if(t.fire){ctx.fillStyle="rgba(249,115,22,.25)";for(let i=0;i<12;i++){ctx.beginPath();ctx.arc((i*57+frames*.6)%W,H-90-rand(0,80),rand(18,38),0,Math.PI*2);ctx.fill()}} if(t.zombie){ctx.fillStyle="rgba(20,83,45,.45)";for(let i=0;i<8;i++){ctx.beginPath();ctx.arc(i*70,H-90,45,0,Math.PI*2);ctx.fill()}}}
 function cloud(c){if(save.theme==="fire"||save.theme==="zombie")ctx.fillStyle="rgba(0,0,0,.25)";else ctx.fillStyle="rgba(255,255,255,.72)";ctx.beginPath();ctx.arc(c.x,c.y,20*c.s,0,Math.PI*2);ctx.arc(c.x+24*c.s,c.y-8*c.s,27*c.s,0,Math.PI*2);ctx.arc(c.x+55*c.s,c.y,20*c.s,0,Math.PI*2);ctx.arc(c.x+28*c.s,c.y+12*c.s,22*c.s,0,Math.PI*2);ctx.fill()}
 function pipe(p){const t=theme();ctx.fillStyle=t.pipe;ctx.fillRect(p.x,0,p.w,p.top);ctx.fillRect(p.x,p.top+p.gap,p.w,H-72-(p.top+p.gap));ctx.fillStyle=t.pipe2;ctx.fillRect(p.x-6,p.top-20,p.w+12,20);ctx.fillRect(p.x-6,p.top+p.gap,p.w+12,20);ctx.fillStyle="rgba(255,255,255,.14)";ctx.fillRect(p.x+8,0,10,p.top-26);ctx.fillRect(p.x+8,p.top+p.gap+24,10,H-72-(p.top+p.gap+24))}
 function ground(){const gy=H-72,t=theme();ctx.fillStyle=t.pipe2;ctx.fillRect(0,gy,W,72);ctx.fillStyle=t.pipe;for(let x=-40+(frames*speed%40);x<W;x+=40){ctx.beginPath();ctx.moveTo(x,gy);ctx.lineTo(x+20,gy+18);ctx.lineTo(x+40,gy);ctx.fill()}ctx.fillStyle=save.theme==="fire"?"#451a03":"#854d0e";ctx.fillRect(0,gy+38,W,34)}
+
+function hazardDraw(h){
+ ctx.save();ctx.translate(h.x,h.y);ctx.textAlign="center";ctx.textBaseline="middle";
+ if(h.type==="fireball"){ctx.fillStyle="#f97316";ctx.beginPath();ctx.arc(0,0,20,0,Math.PI*2);ctx.fill();ctx.fillStyle="#ef4444";ctx.beginPath();ctx.moveTo(-18,0);ctx.lineTo(-45,-12);ctx.lineTo(-32,12);ctx.closePath();ctx.fill();}
+ else if(h.type==="zombiehand"){ctx.font="34px Arial";ctx.fillText("🧟",0,0)}
+ else if(h.type==="branch"){ctx.fillStyle="#78350f";ctx.fillRect(-35,-8,70,16);ctx.fillStyle="#22c55e";ctx.beginPath();ctx.arc(15,-12,18,0,Math.PI*2);ctx.fill();}
+ else if(h.type==="ball"){ctx.font="30px Arial";ctx.fillText("⚽",0,0)}
+ else if(h.type==="meteor"){ctx.font="34px Arial";ctx.fillText("☄️",0,0)}
+ else if(h.type==="arrow"){ctx.font="32px Arial";ctx.fillText("➳",0,0)}
+ else if(h.type==="jelly"){ctx.font="34px Arial";ctx.fillText("🪼",0,0)}
+ ctx.restore();
+}
+
 function coin(c){ctx.save();ctx.translate(c.x,c.y);ctx.fillStyle="#facc15";ctx.beginPath();ctx.ellipse(0,0,12,16,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#ca8a04";ctx.lineWidth=4;ctx.stroke();ctx.restore()}
 function keyDraw(k){ctx.save();ctx.translate(k.x,k.y);ctx.font="28px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("🔑",0,0);ctx.restore()}
 function powerDraw(p){ctx.save();ctx.translate(p.x,p.y);ctx.font="28px Arial";ctx.textAlign="center";ctx.textBaseline="middle";let icon=p.type==="heart"?"❤️":p.type==="shield"?"🛡️":p.type==="magnet"?"🧲":"🐢";ctx.fillText(icon,0,0);ctx.restore()}
