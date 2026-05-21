@@ -1,0 +1,24 @@
+PÁSSARO REWARDS MOBILE PWA
+
+Esta é a versão para celular/iPhone.
+
+Para instalar no iPhone:
+1. Suba os arquivos no GitHub Pages.
+2. Abra o link HTTPS no Safari.
+3. Toque em Compartilhar.
+4. Toque em Adicionar à Tela de Início.
+
+Arquivos que devem ir para o GitHub:
+- index.html
+- manifest.json
+- sw.js
+- icon.svg
+- LEIA-ME.txt
+
+Recursos:
+- moedas coletáveis;
+- carteira salva;
+- lojinha de skins;
+- reviver por 50 moedas;
+- dificuldade acelera conforme os pontos aumentam;
+- recorde salvo.
