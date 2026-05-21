@@ -31,3 +31,9 @@ AJUSTES:
 - Liga/desliga som.
 - Controle de brilho entre 40% e 100%.
 - Preferências salvas no aparelho.
+
+
+CORREÇÃO FINAL 2:
+- Corrigido erro que deixava a tela travada/embaçada.
+- Ajustes de brilho agora carregam corretamente.
+- Cache do PWA atualizado.

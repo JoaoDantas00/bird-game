@@ -24,7 +24,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-acti
 .midPanel{width:118px;padding:8px;font-size:12px;color:#fecaca}.midPanel span{display:block;font-size:19px;margin-top:2px}
 .bestPanel{width:104px;padding:8px;font-size:11px;color:#e0e7ff}.bestPanel strong{display:block;font-size:20px;color:white}
 #pauseBtn{pointer-events:auto;width:48px;height:48px;border-radius:16px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.82);color:#111827;font-size:22px;font-weight:900;box-shadow:0 8px 18px rgba(0,0,0,.22)}
-.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,.48);padding:18px;padding-top:calc(18px + env(safe-area-inset-top));padding-bottom:calc(18px + env(safe-area-inset-bottom));backdrop-filter:blur(6px)}
+.overlay{z-index:5;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,.48);padding:18px;padding-top:calc(18px + env(safe-area-inset-top));padding-bottom:calc(18px + env(safe-area-inset-bottom));backdrop-filter:blur(6px)}
 .card{background:linear-gradient(145deg,rgba(15,23,42,.96),rgba(51,65,85,.94));border:1px solid rgba(255,255,255,.22);border-radius:28px;color:white;text-align:center;padding:20px;max-width:430px;width:100%;box-shadow:0 22px 50px rgba(0,0,0,.35);max-height:calc(100vh - 34px - env(safe-area-inset-top) - env(safe-area-inset-bottom));overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;touch-action:pan-y;overscroll-behavior:contain}
 .card h1{margin:0 0 8px;font-size:32px;letter-spacing:-1px}.card p{line-height:1.38;margin:7px 0;color:#dbeafe}.row{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin-top:11px}
 .menuBtn{border:0;border-radius:16px;padding:13px 15px;background:linear-gradient(135deg,#facc15,#f59e0b);color:#451a03;font-weight:900;font-size:15px;cursor:pointer;min-width:110px;box-shadow:0 6px 0 rgba(0,0,0,.25)}.menuBtn.alt{background:linear-gradient(135deg,#93c5fd,#3b82f6);color:white}.menuBtn.green{background:linear-gradient(135deg,#22c55e,#15803d);color:white}.menuBtn.red{background:linear-gradient(135deg,#fb7185,#e11d48);color:white}
@@ -86,7 +86,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-acti
 .shop,.trophyGrid,.missionList,.rankList{padding-bottom:90px}
 .row:last-child{padding-bottom:14px}
 
-.brightnessLayer{position:absolute;inset:0;pointer-events:none;background:#000;opacity:0;z-index:4}
+.brightnessLayer{z-index:4;position:absolute;inset:0;pointer-events:none;background:#000;opacity:0;z-index:4}
 .settingsSlider{width:100%;accent-color:#facc15;margin-top:10px}
 .settingsValue{color:#fde68a;font-weight:900}
 
@@ -147,7 +147,8 @@ const themes={
 };
 let state="menu",score=0,coinsRun=0,keysRun=0,lives=3,frames=0,speed=2.7,difficulty=1,revived=false,pipes=[],coins=[],keys=[],powerups=[],clouds=[],particles=[],shield=0,magnet=0,slow=0;
 const bird={x:95,y:260,r:17,vy:0,gravity:.42,jump:-7.3,rot:0,inv:0};
-function persist(){localStorage.setItem("birdRewardsV3Save",JSON.stringify(save))}
+function applyBrightness(){if(typeof brightnessLayer!=="undefined"&&brightnessLayer){brightnessLayer.style.opacity=String((100-(save.brightness||100))/100*.65)}}
+function persist(){localStorage.setItem("birdRewardsV3Save",JSON.stringify(save));applyBrightness()}
 function rand(a,b){return a+Math.random()*(b-a)}
 function hud(){scoreEl.textContent=score;walletEl.textContent=save.wallet;keysEl.textContent=save.keys;bestEl.textContent=save.best;livesEl.textContent="❤️".repeat(Math.max(0,lives))}
 function showPower(t){powerText.textContent=t;powerText.style.display="block";setTimeout(()=>powerText.style.display="none",1300)}
