@@ -1,6 +1,6 @@
 {
-  "name": "Pássaro Rewards",
-  "short_name": "Pássaro",
+  "name": "Pássaro Rewards V2",
+  "short_name": "Pássaro V2",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#7dd3fc",

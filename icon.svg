@@ -6,4 +6,5 @@
 <circle cx="260" cy="216" r="32" fill="#fff"/>
 <circle cx="272" cy="216" r="13" fill="#020617"/>
 <circle cx="382" cy="115" r="44" fill="#facc15"/>
+<text x="356" y="136" font-size="58" text-anchor="middle">🔑</text>
 </svg>

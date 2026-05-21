@@ -1,6 +1,4 @@
-PÁSSARO REWARDS MOBILE PWA
-
-Esta é a versão para celular/iPhone.
+PÁSSARO REWARDS V2 - MOBILE PWA
 
 Para instalar no iPhone:
 1. Suba os arquivos no GitHub Pages.
@@ -15,10 +13,12 @@ Arquivos que devem ir para o GitHub:
 - icon.svg
 - LEIA-ME.txt
 
-Recursos:
-- moedas coletáveis;
-- carteira salva;
-- lojinha de skins;
-- reviver por 50 moedas;
-- dificuldade acelera conforme os pontos aumentam;
-- recorde salvo.
+Novidades V2:
+- Vidas.
+- Chaves raras.
+- Power-ups: coração, escudo, ímã e lentidão.
+- Loja maior com pássaros de raridade.
+- Pássaro dourado comprado com chaves.
+- Reviver por 50 moedas ou 1 chave.
+- Nível do jogador.
+- Dificuldade acelera com os pontos.
