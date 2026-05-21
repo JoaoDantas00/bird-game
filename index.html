@@ -60,6 +60,19 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-acti
 .copyArea{width:100%;min-height:110px;border:1px solid rgba(255,255,255,.18);border-radius:16px;background:rgba(15,23,42,.75);color:white;padding:12px;margin-top:10px;font-family:Arial;font-size:14px}
 .badgeMini{display:inline-block;padding:4px 8px;border-radius:999px;background:rgba(250,204,21,.18);color:#fde68a;font-size:11px;margin-left:6px}
 
+
+.nickInput{width:100%;border:1px solid rgba(255,255,255,.18);border-radius:16px;background:rgba(15,23,42,.75);color:white;padding:13px;margin:10px 0;font-size:16px;text-align:center;font-weight:800}
+.rankList{display:grid;gap:8px;margin-top:12px}
+.rankItem{display:grid;grid-template-columns:42px 1fr 70px;gap:8px;align-items:center;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:10px;text-align:left}
+.rankPos{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:rgba(250,204,21,.2);font-weight:900;color:#fde68a}
+.rankName{font-weight:900;color:white}.rankScore{text-align:right;color:#bfdbfe;font-weight:900}
+.missionList{display:grid;gap:9px;margin-top:12px}
+.missionCard{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:18px;padding:11px;text-align:left}
+.missionCard b{color:white}.missionCard small{display:block;color:#cbd5e1;margin-top:4px}.bar{height:9px;border-radius:999px;background:rgba(15,23,42,.65);margin-top:8px;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,#22c55e,#facc15);border-radius:999px}
+.settingsRow{display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:12px;margin-top:10px;text-align:left}
+.toggle{border:0;border-radius:999px;padding:9px 12px;background:#22c55e;color:white;font-weight:900}
+.toggle.off{background:#64748b}
+
 </style>
 </head>
 <body>
@@ -88,7 +101,7 @@ const scoreEl=document.getElementById("score"),walletEl=document.getElementById(
 let save;try{save=JSON.parse(localStorage.getItem("birdRewardsV3Save")||"")}catch(e){save=null}
 if(!save)save={wallet:0,keys:0,best:0,skin:"zombie",owned:["zombie"],theme:"sky",ownedThemes:["sky"],level:1,xp:0,totalCoins:0,totalKeys:0,games:0,revives:0};
 if(!save.owned)save.owned=["zombie"]; if(!save.owned.includes("zombie"))save.owned.unshift("zombie"); if(save.skin==="yellow"||save.skin==="alvinegro"||save.skin==="blueclub"||save.skin==="redclub"||save.skin==="greenclub"||save.skin==="purple")save.skin="zombie";
-if(save.totalCoins===undefined)save.totalCoins=save.wallet||0; if(save.totalKeys===undefined)save.totalKeys=save.keys||0; if(save.games===undefined)save.games=0; if(save.revives===undefined)save.revives=0;
+if(save.totalCoins===undefined)save.totalCoins=save.wallet||0; if(save.totalKeys===undefined)save.totalKeys=save.keys||0; if(save.games===undefined)save.games=0; if(save.revives===undefined)save.revives=0; if(!save.nick)save.nick="Jogador"; if(!save.ranking)save.ranking=[]; if(save.sound===undefined)save.sound=true; if(!save.daily)save.daily={date:"",coins:0,score:0,games:0,claimed:[]};
 
 const skins={
  zombie:{name:"Pássaro Zumbi",rarity:"Temático",price:0,body:"#84cc16",wing:"#365314",themeIcon:"🧟",fx:"zombie"},
@@ -123,22 +136,96 @@ function showMenu(){
  '<div class="menuGrid">'+
  '<button class="menuTile" id="skinBtn"><span>🐤</span>Pássaros<small>'+skinName+'</small></button>'+
  '<button class="menuTile" id="themeBtn"><span>🌎</span>Paisagens<small>'+themeName+'</small></button>'+
- '<button class="menuTile" id="rankingBtn"><span>🏆</span>Recorde<small>'+save.best+' pontos</small></button>'+
- '<button class="menuTile" id="trophyBtn"><span>🎖️</span>Troféus<small>Missões</small></button>'+
+ '<button class="menuTile" id="nickBtn"><span>👤</span>Perfil<small>'+save.nick+'</small></button>'+
+ '<button class="menuTile" id="rankingBtn"><span>🏆</span>Ranking<small>'+save.best+' pontos</small></button>'+
+ '<button class="menuTile" id="missionBtn"><span>📋</span>Missões<small>Diárias</small></button>'+
+ '<button class="menuTile" id="trophyBtn"><span>🎖️</span>Troféus<small>Conquistas</small></button>'+
  '<button class="menuTile" id="shareBtn"><span>📤</span>Compartilhar<small>Seu recorde</small></button>'+
- '<button class="menuTile" id="infoBtn"><span>✨</span>Novidades<small>V5</small></button>'+
+ '<button class="menuTile" id="settingsBtn"><span>⚙️</span>Ajustes<small>Som</small></button>'+
+ '<button class="menuTile" id="infoBtn"><span>✨</span>Novidades<small>V6</small></button>'+
  '</div>'+
- '<div class="newsBox"><b>Novidades:</b> tela inicial reformulada, acesso rápido à loja, paisagens e progresso do jogador. Continue coletando moedas para desbloquear tudo.</div>'+
+ '<div class="newsBox"><b>Novidades:</b> nickname, ranking local, missões diárias, sons e ajustes. Continue coletando moedas para desbloquear tudo.</div>'+
  '<p style="font-size:12px;color:#fde68a">Mobile/PWA: publique no GitHub Pages e instale pela Tela de Início.</p>';
  document.getElementById("playBtn").onclick=start;
  document.getElementById("skinBtn").onclick=()=>shop("skins");
  document.getElementById("themeBtn").onclick=()=>shop("themes");
  document.getElementById("rankingBtn").onclick=()=>showRanking();
+ document.getElementById("nickBtn").onclick=()=>showProfile();
+ document.getElementById("rankingBtn").onclick=()=>showRanking();
+ document.getElementById("missionBtn").onclick=()=>showMissions();
  document.getElementById("trophyBtn").onclick=()=>showTrophies();
  document.getElementById("shareBtn").onclick=()=>showShare();
+ document.getElementById("settingsBtn").onclick=()=>showSettings();
  document.getElementById("infoBtn").onclick=()=>showNews();
 }
 
+
+
+function todayKey(){
+ const d=new Date();
+ return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+}
+function checkDaily(){
+ const t=todayKey();
+ if(!save.daily||save.daily.date!==t){
+  save.daily={date:t,coins:0,score:0,games:0,claimed:[]};
+  persist();
+ }
+}
+function dailyMissions(){
+ checkDaily();
+ return [
+  {id:"play3",icon:"🎮",name:"Jogue 3 partidas",goal:3,value:save.daily.games,reward:25,type:"coins"},
+  {id:"coins30",icon:"🪙",name:"Colete 30 moedas hoje",goal:30,value:save.daily.coins,reward:35,type:"coins"},
+  {id:"score40",icon:"🏆",name:"Faça 40 pontos em uma partida",goal:40,value:save.daily.score,reward:1,type:"key"}
+ ];
+}
+function showProfile(){
+ card.innerHTML='<h1>👤 Perfil</h1><p>Escolha seu nick para aparecer no ranking local e no compartilhamento.</p><input class="nickInput" id="nickInput" maxlength="14" value="'+save.nick+'"><div class="row"><button class="menuBtn green" id="saveNick">SALVAR</button><button class="menuBtn" id="backBtn">VOLTAR</button></div><p style="font-size:12px;color:#fde68a">Em breve: ranking online com amigos.</p>';
+ document.getElementById("saveNick").onclick=()=>{let n=document.getElementById("nickInput").value.trim(); if(!n)n="Jogador"; save.nick=n.slice(0,14); persist(); showMenu();};
+ document.getElementById("backBtn").onclick=showMenu;
+}
+function showSettings(){
+ card.innerHTML='<h1>⚙️ Ajustes</h1><div class="settingsRow"><div><b>Sons simples</b><br><small>Beep de moeda, chave e batida.</small></div><button class="toggle '+(save.sound?'':'off')+'" id="soundToggle">'+(save.sound?'LIGADO':'DESLIGADO')+'</button></div><div class="row"><button class="menuBtn" id="backBtn">VOLTAR</button></div>';
+ document.getElementById("soundToggle").onclick=()=>{save.sound=!save.sound;persist();showSettings();};
+ document.getElementById("backBtn").onclick=showMenu;
+}
+let audioCtx=null;
+function beep(freq,dur){
+ if(!save.sound)return;
+ try{
+  audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();
+  const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+  o.frequency.value=freq;o.connect(g);g.connect(audioCtx.destination);g.gain.value=.035;o.start();setTimeout(()=>o.stop(),dur);
+ }catch(e){}
+}
+function showMissions(){
+ const list=dailyMissions();
+ let html='<h1>📋 Missões Diárias</h1><p>Reiniciam todo dia. Complete para ganhar recompensas.</p><div class="missionList">';
+ list.forEach(m=>{
+  const done=m.value>=m.goal, claimed=save.daily.claimed.includes(m.id), pct=Math.min(100,Math.floor((m.value/m.goal)*100));
+  html+='<div class="missionCard"><b>'+m.icon+' '+m.name+'</b><small>'+Math.min(m.value,m.goal)+'/'+m.goal+' • Recompensa: '+(m.type==="key"?"🔑 ":"🪙 ")+m.reward+'</small><div class="bar"><div class="fill" style="width:'+pct+'%"></div></div><div class="row">'+(done&&!claimed?'<button class="menuBtn green" data-claim="'+m.id+'">RESGATAR</button>':claimed?'<button class="menuBtn alt">RESGATADO</button>':'')+'</div></div>';
+ });
+ html+='</div><div class="row"><button class="menuBtn" id="backBtn">VOLTAR</button></div>';
+ card.innerHTML=html;
+ document.getElementById("backBtn").onclick=showMenu;
+ Array.from(card.querySelectorAll("[data-claim]")).forEach(b=>b.onclick=()=>claimMission(b.dataset.claim));
+}
+function claimMission(id){
+ const list=dailyMissions();
+ const m=list.find(x=>x.id===id);
+ if(!m||m.value<m.goal||save.daily.claimed.includes(id))return;
+ save.daily.claimed.push(id);
+ if(m.type==="key")save.keys+=m.reward;else save.wallet+=m.reward;
+ persist();hud();showMissions();showPower("🎁 RECOMPENSA!");
+}
+function updateRanking(){
+ save.ranking=save.ranking||[];
+ save.ranking.push({nick:save.nick||"Jogador",score:score,skin:save.skin,date:new Date().toLocaleDateString()});
+ save.ranking.sort((a,b)=>b.score-a.score);
+ save.ranking=save.ranking.slice(0,10);
+ persist();
+}
 
 function trophyList(){
  return [
@@ -175,11 +262,16 @@ function showShare(){
 }
 
 function showRanking(){
- card.innerHTML='<h1>🏆 Seu Progresso</h1><p>Recorde atual: <b>'+save.best+' pontos</b></p><p>Nível: <b>'+save.level+'</b><br>XP atual: <b>'+save.xp+'</b></p><p>Carteira: <b>🪙 '+save.wallet+'</b> | Chaves: <b>🔑 '+save.keys+'</b></p><div class="row"><button class="menuBtn" id="backBtn">VOLTAR</button></div>';
+ const list=(save.ranking||[]).slice(0,10);
+ let html='<h1>🏆 Ranking Local</h1><p>Ranking salvo neste aparelho. Em breve: online com amigos.</p><div class="rankList">';
+ if(list.length===0){html+='<p>Ainda não há partidas no ranking.</p>'}
+ list.forEach((r,i)=>{html+='<div class="rankItem"><div class="rankPos">'+(i+1)+'</div><div><div class="rankName">'+r.nick+'</div><small>'+r.date+'</small></div><div class="rankScore">'+r.score+'</div></div>'});
+ html+='</div><div class="row"><button class="menuBtn" id="backBtn">VOLTAR</button></div>';
+ card.innerHTML=html;
  document.getElementById("backBtn").onclick=showMenu;
 }
 function showNews(){
- card.innerHTML='<h1>✨ Novidades V5</h1><p>Essa versão muda a identidade do jogo.</p><p>✅ Pássaros temáticos<br>✅ Aba Troféus<br>✅ Missões permanentes<br>✅ Aba Compartilhar<br>✅ Preparação para Nick e Ranking<br>✅ Paisagens e loja mantidas</p><p>Próximos passos: nickname, ranking online, sons melhores e missões diárias.</p><div class="row"><button class="menuBtn" id="backBtn">VOLTAR</button></div>';
+ card.innerHTML='<h1>✨ Novidades V6</h1><p>Agora o jogo começa a ficar pronto para testes com amigos.</p><p>✅ Nickname local<br>✅ Ranking local<br>✅ Missões diárias<br>✅ Recompensas resgatáveis<br>✅ Sons simples com liga/desliga<br>✅ Compartilhamento com nick</p><p>Próximos passos: ranking online, tela de seleção de dificuldade, sons melhores e publicação Android.</p><div class="row"><button class="menuBtn" id="backBtn">VOLTAR</button></div>';
  document.getElementById("backBtn").onclick=showMenu;
 }
 
@@ -192,15 +284,15 @@ function shop(type){
  document.getElementById("backBtn").onclick=showMenu;Array.from(card.querySelectorAll("[data-id]")).forEach(b=>b.onclick=()=>buy(type,b.dataset.id));
 }
 function buy(type,id){let isTheme=type==="themes",data=isTheme?themes:skins,s=data[id],owned=isTheme?save.ownedThemes.includes(id):save.owned.includes(id);if(owned){if(isTheme)save.theme=id;else save.skin=id;persist();shop(type);return}if(s.keyPrice){if(save.keys>=s.price){save.keys-=s.price;if(isTheme)save.ownedThemes.push(id);else save.owned.push(id);if(isTheme)save.theme=id;else save.skin=id;persist();hud();shop(type)}}else if(save.wallet>=s.price){save.wallet-=s.price;if(isTheme)save.ownedThemes.push(id);else save.owned.push(id);if(isTheme)save.theme=id;else save.skin=id;persist();hud();shop(type)}}
-function start(){state="play";overlay.style.display="none";save.games++;persist();score=0;coinsRun=0;keysRun=0;lives=3;frames=0;speed=2.7;difficulty=1;revived=false;pipes=[];coins=[];keys=[];powerups=[];particles=[];clouds=[];shield=0;magnet=0;slow=0;bird.x=W*.23;bird.y=H*.45;bird.vy=0;bird.inv=90;for(let i=0;i<8;i++)clouds.push({x:rand(0,W),y:rand(40,H-120),s:rand(.7,1.5),v:rand(.12,.35)});hud();}
+function start(){state="play";overlay.style.display="none";checkDaily();save.games++;save.daily.games++;persist();score=0;coinsRun=0;keysRun=0;lives=3;frames=0;speed=2.7;difficulty=1;revived=false;pipes=[];coins=[];keys=[];powerups=[];particles=[];clouds=[];shield=0;magnet=0;slow=0;bird.x=W*.23;bird.y=H*.45;bird.vy=0;bird.inv=90;for(let i=0;i<8;i++)clouds.push({x:rand(0,W),y:rand(40,H-120),s:rand(.7,1.5),v:rand(.12,.35)});hud();}
 function flap(){if(state==="menu"||state==="over"){start();return}if(state==="play"){bird.vy=bird.jump;for(let i=0;i<5;i++)particles.push({x:bird.x-10,y:bird.y+5,vx:rand(-3,-1),vy:rand(-1,1),life:20})}}
 function spawnPipe(){const gap=Math.max(H*.21,H*.32-difficulty*8),top=rand(78,H-gap-122),w=Math.max(58,W*.13),x=W+20;pipes.push({x,w,top,gap,passed:false});if(Math.random()<.88)coins.push({x:x+w/2,y:top+gap/2,r:13,taken:false});if(Math.random()<.11)keys.push({x:x+w/2+rand(-25,25),y:top+gap/2+rand(-40,40),r:15,taken:false});if(Math.random()<.14){const types=["heart","shield","magnet","slow"];powerups.push({x:x+w/2+rand(-30,30),y:top+gap/2+rand(-35,35),r:16,taken:false,type:types[Math.floor(Math.random()*types.length)]})}}
-function update(){if(state!=="play")return;frames++;difficulty=Math.min(8,1+score/16);let actualSpeed=speed;if(slow>0)actualSpeed*=.62;speed=Math.min(7.7,2.7+score*.058);bird.vy+=bird.gravity;bird.y+=bird.vy;bird.rot=Math.max(-.55,Math.min(1.2,bird.vy/8));if(bird.inv>0)bird.inv--;if(shield>0)shield--;if(magnet>0)magnet--;if(slow>0)slow--;if(frames%Math.max(58,96-Math.floor(difficulty*4))===0)spawnPipe();pipes.forEach(p=>{p.x-=actualSpeed;if(!p.passed&&p.x+p.w<bird.x){p.passed=true;score++;scoreEl.textContent=score}});pipes=pipes.filter(p=>p.x+p.w>-30);move(coins,actualSpeed);move(keys,actualSpeed);move(powerups,actualSpeed);coins.forEach(c=>{if(magnet>0&&Math.abs(c.x-bird.x)<150){c.x+=(bird.x-c.x)*.08;c.y+=(bird.y-c.y)*.08} if(!c.taken&&Math.hypot(bird.x-c.x,bird.y-c.y)<31){c.taken=true;coinsRun++;save.wallet++;save.totalCoins++;score+=2;persist();hud();burst(c.x,c.y,true)}});keys.forEach(k=>{if(!k.taken&&Math.hypot(bird.x-k.x,bird.y-k.y)<34){k.taken=true;keysRun++;save.keys++;save.totalKeys++;score+=6;persist();hud();burst(k.x,k.y,true);showPower("🔑 CHAVE!")}});powerups.forEach(p=>{if(!p.taken&&Math.hypot(bird.x-p.x,bird.y-p.y)<34){p.taken=true;applyPower(p.type);burst(p.x,p.y,true)}});coins=coins.filter(c=>!c.taken&&c.x>-40);keys=keys.filter(c=>!c.taken&&c.x>-40);powerups=powerups.filter(c=>!c.taken&&c.x>-40);particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.life--});particles=particles.filter(p=>p.life>0);clouds.forEach(c=>{c.x-=c.v*actualSpeed;if(c.x<-100){c.x=W+120;c.y=rand(50,H-140)}});if(bird.y-bird.r<0||bird.y+bird.r>H-72)hitDanger("queda");for(const p of pipes){if(bird.inv<=0&&(circleRect(bird.x,bird.y,bird.r,p.x,0,p.w,p.top)||circleRect(bird.x,bird.y,bird.r,p.x,p.top+p.gap,p.w,H-72-(p.top+p.gap)))){hitDanger("cano");break}}}
+function update(){if(state!=="play")return;frames++;difficulty=Math.min(8,1+score/16);let actualSpeed=speed;if(slow>0)actualSpeed*=.62;speed=Math.min(7.7,2.7+score*.058);bird.vy+=bird.gravity;bird.y+=bird.vy;bird.rot=Math.max(-.55,Math.min(1.2,bird.vy/8));if(bird.inv>0)bird.inv--;if(shield>0)shield--;if(magnet>0)magnet--;if(slow>0)slow--;if(frames%Math.max(58,96-Math.floor(difficulty*4))===0)spawnPipe();pipes.forEach(p=>{p.x-=actualSpeed;if(!p.passed&&p.x+p.w<bird.x){p.passed=true;score++;scoreEl.textContent=score}});pipes=pipes.filter(p=>p.x+p.w>-30);move(coins,actualSpeed);move(keys,actualSpeed);move(powerups,actualSpeed);coins.forEach(c=>{if(magnet>0&&Math.abs(c.x-bird.x)<150){c.x+=(bird.x-c.x)*.08;c.y+=(bird.y-c.y)*.08} if(!c.taken&&Math.hypot(bird.x-c.x,bird.y-c.y)<31){c.taken=true;coinsRun++;save.wallet++;save.totalCoins++;save.daily.coins++;score+=2;persist();hud();burst(c.x,c.y,true);beep(820,45)}});keys.forEach(k=>{if(!k.taken&&Math.hypot(bird.x-k.x,bird.y-k.y)<34){k.taken=true;keysRun++;save.keys++;save.totalKeys++;score+=6;persist();hud();burst(k.x,k.y,true);showPower("🔑 CHAVE!");beep(1100,70)}});powerups.forEach(p=>{if(!p.taken&&Math.hypot(bird.x-p.x,bird.y-p.y)<34){p.taken=true;applyPower(p.type);burst(p.x,p.y,true)}});coins=coins.filter(c=>!c.taken&&c.x>-40);keys=keys.filter(c=>!c.taken&&c.x>-40);powerups=powerups.filter(c=>!c.taken&&c.x>-40);particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.life--});particles=particles.filter(p=>p.life>0);clouds.forEach(c=>{c.x-=c.v*actualSpeed;if(c.x<-100){c.x=W+120;c.y=rand(50,H-140)}});if(bird.y-bird.r<0||bird.y+bird.r>H-72)hitDanger("queda");for(const p of pipes){if(bird.inv<=0&&(circleRect(bird.x,bird.y,bird.r,p.x,0,p.w,p.top)||circleRect(bird.x,bird.y,bird.r,p.x,p.top+p.gap,p.w,H-72-(p.top+p.gap)))){hitDanger("cano");break}}}
 function move(a,s){a.forEach(c=>c.x-=s)}function applyPower(t){if(t==="heart"){lives=Math.min(5,lives+1);hud();showPower("❤️ +1 VIDA")} if(t==="shield"){shield=520;showPower("🛡️ ESCUDO")} if(t==="magnet"){magnet=520;showPower("🧲 ÍMÃ")} if(t==="slow"){slow=430;showPower("🐢 LENTO")}}
 function burst(x,y,gold){for(let i=0;i<9;i++)particles.push({x,y,vx:rand(-2.5,2.5),vy:rand(-2.5,2.5),life:25,gold})}
 function hitDanger(reason){if(bird.inv>0)return;if(shield>0){shield=0;bird.inv=80;showPower("🛡️ DEFENDEU!");return}lives--;hud();if(lives>0){bird.y=H*.45;bird.vy=bird.jump;bird.inv=115;showPower("❤️ -1 VIDA")}else gameOver(reason)}
 function circleRect(cx,cy,cr,rx,ry,rw,rh){const x=Math.max(rx,Math.min(cx,rx+rw)),y=Math.max(ry,Math.min(cy,ry+rh)),dx=cx-x,dy=cy-y;return dx*dx+dy*dy<cr*cr}
-function gameOver(reason){if(state!=="play")return;state="over";save.xp+=score+coinsRun*2+keysRun*10;while(save.xp>=save.level*180){save.xp-=save.level*180;save.level++;save.wallet+=25}if(score>save.best)save.best=score;persist();const canCoin=save.wallet>=50&&!revived,canKey=save.keys>=1&&!revived;overlay.style.display="flex";card.innerHTML='<h1>'+(score>=save.best?'Novo Recorde!':'Fim de jogo')+'</h1><p>'+(reason==="cano"?'Você bateu no cano!':'O pássaro caiu!')+'</p><p>Pontos: <b>'+score+'</b><br>Moedas: <b>'+coinsRun+'</b> | Chaves: <b>'+keysRun+'</b><br>Carteira: <b>🪙 '+save.wallet+'</b> 🔑 <b>'+save.keys+'</b><br>Nível: <b>'+save.level+'</b></p><div class="row">'+(canCoin?'<button class="menuBtn green" id="reviveCoin">REVIVER - 50 🪙</button>':'')+(canKey?'<button class="menuBtn green" id="reviveKey">REVIVER - 1 🔑</button>':'')+'<button class="menuBtn alt" id="againBtn">JOGAR DE NOVO</button><button class="menuBtn" id="menuBtn">MENU</button></div>';if(canCoin)document.getElementById("reviveCoin").onclick=()=>revive("coin");if(canKey)document.getElementById("reviveKey").onclick=()=>revive("key");document.getElementById("againBtn").onclick=start;document.getElementById("menuBtn").onclick=showMenu;hud();}
+function gameOver(reason){if(state!=="play")return;state="over";save.xp+=score+coinsRun*2+keysRun*10;while(save.xp>=save.level*180){save.xp-=save.level*180;save.level++;save.wallet+=25}if(score>save.daily.score)save.daily.score=score;if(score>save.best)save.best=score;updateRanking();persist();beep(180,110);const canCoin=save.wallet>=50&&!revived,canKey=save.keys>=1&&!revived;overlay.style.display="flex";card.innerHTML='<h1>'+(score>=save.best?'Novo Recorde!':'Fim de jogo')+'</h1><p>'+(reason==="cano"?'Você bateu no cano!':'O pássaro caiu!')+'</p><p>Pontos: <b>'+score+'</b><br>Moedas: <b>'+coinsRun+'</b> | Chaves: <b>'+keysRun+'</b><br>Carteira: <b>🪙 '+save.wallet+'</b> 🔑 <b>'+save.keys+'</b><br>Nível: <b>'+save.level+'</b></p><div class="row">'+(canCoin?'<button class="menuBtn green" id="reviveCoin">REVIVER - 50 🪙</button>':'')+(canKey?'<button class="menuBtn green" id="reviveKey">REVIVER - 1 🔑</button>':'')+'<button class="menuBtn alt" id="againBtn">JOGAR DE NOVO</button><button class="menuBtn" id="menuBtn">MENU</button></div>';if(canCoin)document.getElementById("reviveCoin").onclick=()=>revive("coin");if(canKey)document.getElementById("reviveKey").onclick=()=>revive("key");document.getElementById("againBtn").onclick=start;document.getElementById("menuBtn").onclick=showMenu;hud();}
 function revive(type){if(revived)return;if(type==="coin"){if(save.wallet<50)return;save.wallet-=50}else{if(save.keys<1)return;save.keys--}revived=true;save.revives++;persist();hud();lives=1;bird.y=H*.45;bird.vy=bird.jump;bird.inv=170;pipes=[];coins=[];keys=[];powerups=[];overlay.style.display="none";state="play"}
 function draw(){sky();backgroundDetails();clouds.forEach(cloud);pipes.forEach(pipe);coins.forEach(coin);keys.forEach(keyDraw);powerups.forEach(powerDraw);ground();particles.forEach(effect);birdDraw();}
 function theme(){return themes[save.theme]||themes.sky}

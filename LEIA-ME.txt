@@ -1,26 +1,20 @@
-PÁSSARO REWARDS V5
+PÁSSARO REWARDS V6
 
 Novidades:
-- Pássaros simples removidos.
-- Novos pássaros temáticos:
-  - Zumbi
-  - Futurista
-  - Jogador de futebol
-  - Brasil Copa
-  - Elegante
-  - Fogo
-  - Aranha
-  - Dourado
-- Aba Troféus com missões permanentes.
-- Aba Compartilhar para enviar recorde aos amigos.
-- Preparado para futuro Nick e Ranking.
-- Paisagens compráveis mantidas.
-- Moedas, chaves, vidas e power-ups mantidos.
+- Nickname local.
+- Ranking local no aparelho.
+- Missões diárias.
+- Recompensas resgatáveis.
+- Sons simples com opção ligar/desligar.
+- Compartilhamento agora usa o nick.
+- Base preparada para ranking online futuro.
 
-Para PC:
-- Abra index.html.
+Para atualizar no GitHub:
+1. Extraia este ZIP.
+2. Envie/substitua os arquivos no mesmo repositório.
+3. Faça Commit changes.
+4. Aguarde o GitHub Pages atualizar.
 
-Para Mobile/PWA:
-- Atualize os arquivos no GitHub Pages.
-- Abra o link no celular.
-- Se necessário, remova e adicione novamente à tela inicial.
+Se o celular mostrar a versão antiga:
+- Recarregue a página.
+- Ou remova o app da tela inicial e adicione novamente.
