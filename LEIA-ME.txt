@@ -20,3 +20,8 @@ Para atualizar no GitHub:
 2. Envie os arquivos para o mesmo repositório.
 3. Clique em Commit changes.
 4. Aguarde o GitHub Pages atualizar.
+
+
+CORREÇÃO SCROLL:
+- Menus longos agora podem ser arrastados/rolados no celular.
+- Loja, troféus e missões ganharam área de rolagem.
