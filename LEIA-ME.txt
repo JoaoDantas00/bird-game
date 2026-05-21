@@ -25,3 +25,9 @@ Para atualizar no GitHub:
 CORREÇÃO SCROLL:
 - Menus longos agora podem ser arrastados/rolados no celular.
 - Loja, troféus e missões ganharam área de rolagem.
+
+
+AJUSTES:
+- Liga/desliga som.
+- Controle de brilho entre 40% e 100%.
+- Preferências salvas no aparelho.
