@@ -18,3 +18,10 @@ Para Mobile/PWA:
 - Suba os arquivos no GitHub Pages.
 - Abra o link no Safari/Chrome.
 - Adicione à tela de início.
+
+
+V4 MENU:
+- Tela inicial reformulada.
+- Botão grande de jogar.
+- Cards de status.
+- Acesso rápido para pássaros, paisagens, recorde e novidades.

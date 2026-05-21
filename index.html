@@ -34,6 +34,22 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-acti
 .previewDot{display:inline-block;width:20px;height:20px;border-radius:50%;margin-right:8px;vertical-align:middle;border:2px solid rgba(255,255,255,.7)}
 .tip{position:absolute;bottom:calc(10px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:rgba(15,23,42,.55);color:white;padding:9px 13px;border-radius:14px;font-size:12px;border:1px solid rgba(255,255,255,.18);pointer-events:none;white-space:nowrap}
 .power{position:absolute;left:50%;top:calc(72px + env(safe-area-inset-top));transform:translateX(-50%);padding:8px 12px;background:rgba(15,23,42,.72);border-radius:13px;color:white;font-size:13px;font-weight:900;display:none}
+
+.menuHero{position:relative;overflow:hidden;border-radius:24px;padding:20px 16px;margin-bottom:12px;background:linear-gradient(145deg,rgba(37,99,235,.35),rgba(15,23,42,.25));border:1px solid rgba(255,255,255,.16)}
+.menuHero:before{content:"";position:absolute;inset:-60px;background:radial-gradient(circle at 20% 20%,rgba(250,204,21,.35),transparent 28%),radial-gradient(circle at 85% 30%,rgba(96,165,250,.35),transparent 30%);pointer-events:none}
+.logoBird{position:relative;margin:0 auto 8px;width:94px;height:94px;border-radius:50%;background:linear-gradient(135deg,#facc15,#f97316);box-shadow:0 12px 30px rgba(0,0,0,.35);display:grid;place-items:center;font-size:48px;border:4px solid rgba(255,255,255,.28)}
+.gameTitle{position:relative;font-size:36px!important;margin:0!important;line-height:1;letter-spacing:-1.5px}
+.gameSubtitle{position:relative;color:#bfdbfe!important;font-size:14px;margin-top:8px!important}
+.playerStrip{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:10px 0}
+.statBox{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:10px 8px}
+.statBox small{display:block;color:#93c5fd;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}.statBox b{font-size:18px;color:white}
+.bigPlay{width:100%;font-size:20px!important;padding:17px!important;border-radius:20px!important;background:linear-gradient(135deg,#22c55e,#16a34a)!important;color:white!important;margin-top:6px;box-shadow:0 8px 0 rgba(0,0,0,.3)!important}
+.menuGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+.menuTile{border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.1);color:white;border-radius:18px;padding:13px 10px;font-weight:900;cursor:pointer;text-align:left}
+.menuTile span{display:block;font-size:24px;margin-bottom:4px}.menuTile small{display:block;color:#cbd5e1;font-size:12px;font-weight:700;margin-top:2px}
+.newsBox{margin-top:12px;background:rgba(15,23,42,.42);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:12px;text-align:left;color:#dbeafe;font-size:13px;line-height:1.45}
+.newsBox b{color:#fde68a}
+
 </style>
 </head>
 <body>
@@ -86,9 +102,35 @@ function hud(){scoreEl.textContent=score;walletEl.textContent=save.wallet;keysEl
 function showPower(t){powerText.textContent=t;powerText.style.display="block";setTimeout(()=>powerText.style.display="none",1300)}
 function showMenu(){
  state="menu";overlay.style.display="flex";hud();
- card.innerHTML='<h1>Pássaro Rewards V3</h1><p>Agora com visual mais moderno, skins de torcida e paisagens compráveis.</p><p>Carteira: <b>🪙 '+save.wallet+'</b> | Chaves: <b>🔑 '+save.keys+'</b><br>Recorde: <b>'+save.best+'</b> | Nível: <b>'+save.level+'</b></p><div class="row"><button class="menuBtn" id="playBtn">JOGAR</button><button class="menuBtn alt" id="skinBtn">PÁSSAROS</button><button class="menuBtn green" id="themeBtn">PAISAGENS</button></div><p style="font-size:12px;color:#fde68a">Mobile/PWA: publique no GitHub Pages e instale pela Tela de Início.</p>';
- document.getElementById("playBtn").onclick=start;document.getElementById("skinBtn").onclick=()=>shop("skins");document.getElementById("themeBtn").onclick=()=>shop("themes");
+ const skinName=(skins[save.skin]||skins.yellow).name;
+ const themeName=(themes[save.theme]||themes.sky).name;
+ card.innerHTML='<div class="menuHero"><div class="logoBird">🐦</div><h1 class="gameTitle">Pássaro Rewards</h1><p class="gameSubtitle">Voe, colete, desbloqueie e bata seu recorde.</p></div>'+
+ '<div class="playerStrip"><div class="statBox"><small>Moedas</small><b>🪙 '+save.wallet+'</b></div><div class="statBox"><small>Chaves</small><b>🔑 '+save.keys+'</b></div><div class="statBox"><small>Nível</small><b>'+save.level+'</b></div></div>'+
+ '<button class="menuBtn bigPlay" id="playBtn">▶ JOGAR AGORA</button>'+
+ '<div class="menuGrid">'+
+ '<button class="menuTile" id="skinBtn"><span>🐤</span>Pássaros<small>'+skinName+'</small></button>'+
+ '<button class="menuTile" id="themeBtn"><span>🌎</span>Paisagens<small>'+themeName+'</small></button>'+
+ '<button class="menuTile" id="rankingBtn"><span>🏆</span>Recorde<small>'+save.best+' pontos</small></button>'+
+ '<button class="menuTile" id="infoBtn"><span>✨</span>Novidades<small>V4 Menu</small></button>'+
+ '</div>'+
+ '<div class="newsBox"><b>Novidades:</b> tela inicial reformulada, acesso rápido à loja, paisagens e progresso do jogador. Continue coletando moedas para desbloquear tudo.</div>'+
+ '<p style="font-size:12px;color:#fde68a">Mobile/PWA: publique no GitHub Pages e instale pela Tela de Início.</p>';
+ document.getElementById("playBtn").onclick=start;
+ document.getElementById("skinBtn").onclick=()=>shop("skins");
+ document.getElementById("themeBtn").onclick=()=>shop("themes");
+ document.getElementById("rankingBtn").onclick=()=>showRanking();
+ document.getElementById("infoBtn").onclick=()=>showNews();
 }
+
+function showRanking(){
+ card.innerHTML='<h1>🏆 Seu Progresso</h1><p>Recorde atual: <b>'+save.best+' pontos</b></p><p>Nível: <b>'+save.level+'</b><br>XP atual: <b>'+save.xp+'</b></p><p>Carteira: <b>🪙 '+save.wallet+'</b> | Chaves: <b>🔑 '+save.keys+'</b></p><div class="row"><button class="menuBtn" id="backBtn">VOLTAR</button></div>';
+ document.getElementById("backBtn").onclick=showMenu;
+}
+function showNews(){
+ card.innerHTML='<h1>✨ Novidades</h1><p>Essa versão está focada em deixar o jogo com mais cara de game mobile.</p><p>✅ Tela inicial nova<br>✅ Botão grande de jogar<br>✅ Cards de status<br>✅ Acesso rápido para pássaros, paisagens, recorde e novidades<br>✅ Skins e paisagens da V3 mantidas</p><p>Próximos passos: missões diárias, sons melhores, conquistas e tela de seleção de dificuldade.</p><div class="row"><button class="menuBtn" id="backBtn">VOLTAR</button></div>';
+ document.getElementById("backBtn").onclick=showMenu;
+}
+
 function shop(type){
  let isTheme=type==="themes";
  let data=isTheme?themes:skins;
