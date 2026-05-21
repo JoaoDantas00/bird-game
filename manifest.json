@@ -1,0 +1,16 @@
+{
+  "name": "Pássaro Rewards",
+  "short_name": "Pássaro",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#7dd3fc",
+  "theme_color": "#2563eb",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
