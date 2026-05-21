@@ -1,24 +1,20 @@
-PÁSSARO REWARDS V2 - MOBILE PWA
+PÁSSARO REWARDS V3
 
-Para instalar no iPhone:
-1. Suba os arquivos no GitHub Pages.
-2. Abra o link HTTPS no Safari.
-3. Toque em Compartilhar.
-4. Toque em Adicionar à Tela de Início.
+Novidades:
+- Interface mais moderna.
+- Skins novas, incluindo pássaro alvinegro inspirado em torcida.
+- Paisagens compráveis:
+  - Noite Estrelada
+  - Cidade NY
+  - Fogo Sombrio
+  - Terra Zumbi
+- Loja separada entre pássaros e paisagens.
+- Sistema de moedas, chaves, vidas, power-ups e nível mantido.
 
-Arquivos que devem ir para o GitHub:
-- index.html
-- manifest.json
-- sw.js
-- icon.svg
-- LEIA-ME.txt
+Para PC:
+- Abra index.html.
 
-Novidades V2:
-- Vidas.
-- Chaves raras.
-- Power-ups: coração, escudo, ímã e lentidão.
-- Loja maior com pássaros de raridade.
-- Pássaro dourado comprado com chaves.
-- Reviver por 50 moedas ou 1 chave.
-- Nível do jogador.
-- Dificuldade acelera com os pontos.
+Para Mobile/PWA:
+- Suba os arquivos no GitHub Pages.
+- Abra o link no Safari/Chrome.
+- Adicione à tela de início.

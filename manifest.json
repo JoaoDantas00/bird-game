@@ -1,10 +1,10 @@
 {
-  "name": "Pássaro Rewards V2",
-  "short_name": "Pássaro V2",
+  "name": "Pássaro Rewards V3",
+  "short_name": "Pássaro V3",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#7dd3fc",
-  "theme_color": "#2563eb",
+  "background_color": "#111827",
+  "theme_color": "#111827",
   "orientation": "portrait",
   "icons": [
     {
